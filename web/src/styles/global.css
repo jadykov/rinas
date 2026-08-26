@@ -37,13 +37,24 @@ html {
   -webkit-text-size-adjust: 100%;
 }
 
+html {
+  min-height: 100%;
+}
+
 body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
   margin: 0;
   font-family: var(--font-body);
   font-size: var(--text-base);
   line-height: 1.6;
   color: var(--text);
   background: var(--bg);
+}
+
+main {
+  flex: 1 0 auto;
 }
 
 h1,

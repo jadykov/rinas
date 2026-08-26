@@ -21,49 +21,49 @@ const { title, productId, productName, source, submitText = 'Отправить 
 const formId = `lead-form-${Math.random().toString(36).slice(2, 8)}`;
 ---
 
-{
-  title && <h2 class="lead-form__title">{title}</h2>
-}
+<div class="lead-form__block">
+  {title && <h2 class="lead-form__title">{title}</h2>}
 
-<form id={formId} class="lead-form" method="post" action="/api/lead" enctype="multipart/form-data" data-lead-form>
-  {productId && <input type="hidden" name="product" value={productId} />}
-  {source && <input type="hidden" name="source" value={source} />}
+  <form id={formId} class="lead-form" method="post" action="/api/lead" enctype="multipart/form-data" data-lead-form>
+    {productId && <input type="hidden" name="product" value={productId} />}
+    {source && <input type="hidden" name="source" value={source} />}
 
-  <div class="lead-form__row">
+    <div class="lead-form__row">
+      <label class="lead-form__label">
+        <span class="lead-form__label-text">Ваше имя *</span>
+        <input class="lead-form__input" type="text" name="name" required maxlength="120" autocomplete="name" placeholder="Как к вам обращаться" />
+      </label>
+
+      <label class="lead-form__label">
+        <span class="lead-form__label-text">Контакт для связи *</span>
+        <input class="lead-form__input" type="text" name="contact" required maxlength="120" autocomplete="tel" placeholder="Телефон или @username" />
+      </label>
+    </div>
+
+    {productName && <p class="lead-form__product">Интересует: {productName}</p>}
+
     <label class="lead-form__label">
-      <span class="lead-form__label-text">Ваше имя *</span>
-      <input class="lead-form__input" type="text" name="name" required maxlength="120" autocomplete="name" placeholder="Как к вам обращаться" />
+      <span class="lead-form__label-text">Опишите заказ</span>
+      <textarea class="lead-form__input lead-form__input--area" name="message" rows="4" maxlength="2000" placeholder="Размеры горшка, интерьер, материал, сроки…"></textarea>
     </label>
 
     <label class="lead-form__label">
-      <span class="lead-form__label-text">Контакт для связи *</span>
-      <input class="lead-form__input" type="text" name="contact" required maxlength="120" autocomplete="tel" placeholder="Телефон или @username" />
+      <span class="lead-form__label-text">Фото интерьера или референсы (до 5 файлов, до 20 МБ)</span>
+      <input class="lead-form__file" type="file" name="attachments" multiple accept="image/jpeg,image/png,image/webp,application/pdf" />
     </label>
-  </div>
 
-  {productName && <p class="lead-form__product">Интересует: {productName}</p>}
+    <label class="lead-form__checkbox">
+      <input type="checkbox" name="consent" required />
+      <span>Согласен на обработку персональных данных в соответствии с <a href="/privacy">политикой конфиденциальности</a> *</span>
+    </label>
 
-  <label class="lead-form__label">
-    <span class="lead-form__label-text">Опишите заказ</span>
-    <textarea class="lead-form__input lead-form__input--area" name="message" rows="4" maxlength="2000" placeholder="Размеры горшка, интерьер, материал, сроки…"></textarea>
-  </label>
+    <input class="lead-form__honeypot" type="text" name="company" tabindex="-1" autocomplete="off" aria-hidden="true" />
 
-  <label class="lead-form__label">
-    <span class="lead-form__label-text">Фото интерьера или референсы (до 5 файлов, до 20 МБ)</span>
-    <input class="lead-form__file" type="file" name="attachments" multiple accept="image/jpeg,image/png,image/webp,application/pdf" />
-  </label>
+    <button class="lead-form__submit" type="submit">{submitText}</button>
 
-  <label class="lead-form__checkbox">
-    <input type="checkbox" name="consent" required />
-    <span>Согласен на обработку персональных данных в соответствии с <a href="/privacy">политикой конфиденциальности</a> *</span>
-  </label>
-
-  <input class="lead-form__honeypot" type="text" name="company" tabindex="-1" autocomplete="off" aria-hidden="true" />
-
-  <button class="lead-form__submit" type="submit">{submitText}</button>
-
-  <p class="lead-form__status" data-lead-status role="status"></p>
-</form>
+    <p class="lead-form__status" data-lead-status role="status"></p>
+  </form>
+</div>
 
 <script>
   const forms = document.querySelectorAll<HTMLFormElement>('[data-lead-form]');
