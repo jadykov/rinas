@@ -78,6 +78,7 @@ const formId = `lead-form-${Math.random().toString(36).slice(2, 8)}`;
       status.classList.remove('lead-form__status--error');
 
       const button = form.querySelector<HTMLButtonElement>('button[type="submit"]');
+      const originalText = button ? button.textContent : '';
       if (button) {
         button.disabled = true;
         button.textContent = 'Отправляем…';
@@ -103,7 +104,7 @@ const formId = `lead-form-${Math.random().toString(36).slice(2, 8)}`;
       } finally {
         if (button) {
           button.disabled = false;
-          button.textContent = '{submitText}';
+          button.textContent = originalText;
         }
       }
     });

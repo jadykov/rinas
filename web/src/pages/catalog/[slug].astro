@@ -32,6 +32,10 @@ const seoDescription = product.seo_description || product.description || '';
 const photos = (product.photos ?? []).map((f) => fileUrl('products', product.id, f));
 const mainPhoto = photos[0] ?? null;
 
+const modelUrl = product.model_3d
+  ? fileUrl('products', product.id, product.model_3d)
+  : '';
+
 const h1Title = diameterInfo && !product.title.includes('горшк')
   ? `${product.title} под горшок ${diameterInfo}`
   : product.title;
@@ -121,6 +125,31 @@ const productJsonLd = JSON.stringify({
       </div>
     </div>
 
+    {modelUrl && (
+      <div class="viewer" data-viewer>
+        <div class="viewer__preview" data-viewer-preview>
+          <p class="viewer__hint">Осмотрите изделие со всех сторон</p>
+          {mainPhoto ? (
+            <img class="viewer__thumb" src={mainPhoto} alt={product.title} />
+          ) : (
+            <div class="viewer__thumb viewer__thumb--placeholder">3D-модель</div>
+          )}
+          <button class="viewer__cta" type="button" data-viewer-open>
+            Смотреть в 3D
+          </button>
+        </div>
+        <model-viewer
+          class="viewer__canvas"
+          data-src={modelUrl}
+          alt={product.title}
+          camera-controls
+          auto-rotate
+          shadow-intensity="1"
+          exposure="1.1"
+        ></model-viewer>
+      </div>
+    )}
+
     <div class="card-lead">
       <LeadForm
         title="Хотите такое же — оставьте заявку"
@@ -132,6 +161,28 @@ const productJsonLd = JSON.stringify({
     </div>
   </article>
 </Base>
+
+<script>
+  // Загружаем модель только по клику на «Смотреть в 3D» — не при открытии страницы.
+  const viewer = document.querySelector('[data-viewer]');
+  const openBtn = viewer?.querySelector('[data-viewer-open]');
+  const preview = viewer?.querySelector('[data-viewer-preview]');
+  const canvas = viewer?.querySelector('model-viewer');
+
+  if (openBtn && canvas) {
+    openBtn.addEventListener('click', async () => {
+      openBtn.disabled = true;
+      openBtn.textContent = 'Загружаем…';
+      try {
+        await import('@google/model-viewer');
+        canvas.setAttribute('src', canvas.dataset.src || '');
+        preview?.classList.add('viewer__preview--hidden');
+      } catch {
+        openBtn.textContent = 'Не удалось загрузить 3D';
+      }
+    });
+  }
+</script>
 
 <style>
   .page {
@@ -239,6 +290,81 @@ const productJsonLd = JSON.stringify({
     border-radius: var(--radius);
     box-shadow: var(--shadow);
     padding: 1.5rem var(--gutter);
+  }
+
+  .viewer {
+    margin-top: 2rem;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    position: relative;
+    aspect-ratio: 4 / 3;
+  }
+
+  .viewer__preview {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    align-content: center;
+    gap: 1rem;
+    background: var(--bg);
+    text-align: center;
+    padding: 1.5rem;
+  }
+
+  .viewer__preview--hidden {
+    display: none;
+  }
+
+  .viewer__hint {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: var(--text-sm);
+  }
+
+  .viewer__thumb {
+    max-height: 240px;
+    object-fit: contain;
+    border-radius: 8px;
+  }
+
+  .viewer__thumb--placeholder {
+    display: grid;
+    place-items: center;
+    width: 100%;
+    max-height: 180px;
+    background: var(--bg-elevated);
+    color: var(--text-muted);
+  }
+
+  .viewer__cta {
+    padding: 0.875rem 1.75rem;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 999px;
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .viewer__cta:hover {
+    background: var(--accent-strong);
+  }
+
+  .viewer__cta:disabled {
+    opacity: 0.6;
+    cursor: wait;
+  }
+
+  .viewer__canvas {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    inset: 0;
   }
 
   @media (min-width: 768px) {

@@ -1,6 +1,6 @@
 # Статус разработки сайта кашпо
 
-Последнее обновление: Фаза 7 завершена.
+Последнее обновление: Фаза 8 завершена.
 
 ## Правила работы
 
@@ -65,8 +65,14 @@
   - H1 в карточке дополняется диаметром: «Напольное кашпо из массива дуба под горшок 25–35 см».
   - SEO-тексты `/custom`: title и lead под запросы «кашпо на заказ», «по своим размерам», «нестандартного размера».
   - Проверено: sitemap.xml и robots.txt → 200, canonical/og в HTML, JSON-LD в карточке.
-- [ ] **Фаза 8 — 3D** ← СЛЕДУЮЩАЯ
-- [ ] **Фаза 9 — Финал**
+- [x] **Фаза 8 — 3D**
+  - Добавлен `@google/model-viewer` 4.3.1 (точная версия, только production-зависимость).
+  - В карточке товара (`[slug].astro`) вьюер рендерится только если заполнено поле `model_3d` (`.glb`).
+  - **Модель грузится только по клику на «Смотреть в 3D»** (динамический `import`), до клика — превью-заглушка (подсказка + кнопка). Не грузится при открытии страницы.
+  - URL модели передаётся через `data-src` на элементе (Astro не интерполирует `{var}` в `<script>`, см. ниже).
+  - Исправлен баг Фазы 6: `{submitText}` в inline-скрипте формы оставался литералом (Astro не подставляет props в `<script>`). Теперь кнопка возвращает исходный текст через захват `originalText`, без подстановки в JS.
+  - Проверено на тестовом `.glb` (куб): вьюер появляется, `data-src` = реальный URL модели, у товара без модели вьюера нет. Тестовая модель из базы удалена (реальные — чеклист владельца).
+- [ ] **Фаза 9 — Финал** ← СЛЕДУЮЩАЯ
 
 ---
 
@@ -82,7 +88,7 @@
   - установка: `docker run --rm -v "$PWD/web:/app" -w /app node:24-alpine sh -c "npm install"`
   - сборка: `docker run --rm -v "$PWD/web:/app" -w /app node:24-alpine sh -c "npm run build"`
   - после сборки перезапустить контейнер: `docker compose restart web`
-- `web/src/pages/` — страницы Astro: `index.astro` (главная), `catalog.astro`, `catalog/[slug].astro`, `custom.astro`, `info.astro`, `about.astro`, `privacy.astro`, `404.astro`, `api/lead.ts` (POST-приём заявок), `sitemap.xml.ts`, `robots.txt.ts` (SSR). `web/src/components/LeadForm.astro` — форма заявки. `web/src/layouts/Base.astro` — шапка+подвал + canonical/OG. `web/src/styles/global.css` — CSS-переменные. `web/src/lib/pb.ts` — клиент PocketBase. `web/src/lib/site.ts` — константы сайта (Telegram-ссылка).
+- `web/src/pages/` — страницы Astro: `index.astro` (главная), `catalog.astro`, `catalog/[slug].astro` (+ 3D-вьюер), `custom.astro`, `info.astro`, `about.astro`, `privacy.astro`, `404.astro`, `api/lead.ts` (POST-приём заявок), `sitemap.xml.ts`, `robots.txt.ts` (SSR). `web/src/components/LeadForm.astro` — форма заявки. `web/src/layouts/Base.astro` — шапка+подвал + canonical/OG. `web/src/styles/global.css` — CSS-переменные. `web/src/lib/pb.ts` — клиент PocketBase. `web/src/lib/site.ts` — константы сайта (Telegram-ссылка).
 
 ### Текущее состояние (что уже работает)
 
@@ -92,22 +98,30 @@
 - Формы: компонент `web/src/components/LeadForm.astro` (на `/`, `/custom`, `/about`, в карточке), эндпоинт `web/src/pages/api/lead.ts` (валидация + honeypot + запись в `leads` + Telegram). Проверено POST-ом вручную.
 - Telegram: токен/чат через env (`TELEGRAM_*` из `.env`, gitignored, проброшены в docker-compose). `.env` сейчас пустой — заполнить бот у `@BotFather` (чеклист владельца).
 - SEO: `sitemap.xml`, `robots.txt` (SSR-эндпоинты), canonical + Open Graph в `Base.astro`, JSON-LD `Product` в карточке, H1 с диаметром горшка, SEO-тексты `/custom`.
+- 3D: `@google/model-viewer` 4.3.1 в карточке, грузится по клику «Смотреть в 3D» (динамический import), до клика — превью. Вьюер только при наличии `model_3d`.
 
-### Следующая фаза 8 — 3D (из docs/PLAN.md)
+### Следующая фаза 9 — Финал (из docs/PLAN.md)
 
-- `@google/model-viewer` в карточке товара, если заполнено поле `model_3d` (`.glb`).
-- **Загружать модель только по клику на кнопку «Смотреть в 3D»**, до клика — превью-заглушка (не грузить модель при открытии страницы).
-- Модели: снять изделие через Polycam/RealityScan (фотограмметрия), сжать `gltf-transform` до 2–5 МБ, залить в поле `model_3d`. На 3–5 топовых работ.
-- Ограничение: у текущих 3 товаров поле `model_3d` пустое — 3D-моделей пока нет (чеклист владельца).
+- Яндекс.Метрика + цели: отправка формы, клик по кнопке Telegram
+- Яндекс.Вебмастер, отправить sitemap
+- Прогон Lighthouse: цель Performance ≥ 90 на мобильном
+- Скрипт бэкапа `pb_data` по cron
+- (Часть — задачи владельца/деплой на VPS: домен, Метрика-счётчик, реальные модели/фото)
+
+### Важно про `<script>` в Astro
+
+Astro **не подставляет** `{переменная}` / props из frontmatter внутрь тега `<script>`. Чтобы передать значение — через атрибут DOM (`data-*`) или захват текста элемента, НЕ через интерполяцию в JS-строке. (Были баги: `{modelUrl}` и `{submitText}` оставались литералами.)
 
 ### Чего НЕТ (не делать): корзина/оплата, личный кабинет, Telegram-бот-каталог, ИИ-чат, реклама, мультиязычность, тёмная тема, Next/React/Vue/Tailwind.
 
-### Порядок на Фазу 8
+### Порядок на Фазу 9
 
-1. Прочитать `docs/PLAN.md` (раздел 4, Фаза 8).
+1. Прочитать `docs/PLAN.md` (раздел 4, Фаза 9).
 2. Проверить, что инфраструктура поднята: `docker compose up -d`.
-3. Добавить `@google/model-viewer` в карточку товара (`web/src/pages/catalog/[slug].astro`), показать только по клику на «Смотреть в 3D», до клика — превью-заглушка.
-4. Собрать внутри Docker, перезапустить `web`, проверить глазами, затем `docs/STATUS.md` + коммит + push.
+3. Счётчик Яндекс.Метрики (вставить код) + цели (отправка формы, клик по Telegram) — данные счётчика нужны от владельца.
+4. Проверить Lighthouse Performance ≥ 90 на мобильном (в песочнице — локально, реальные фото/модели ещё нет).
+5. Скрипт бэкапа `pb_data` по cron (в контейнере или на хосте).
+6. Собрать внутри Docker, перезапустить `web`, проверить глазами, затем `docs/STATUS.md` + коммит + push.
 
 ## Как продолжить работу
 
