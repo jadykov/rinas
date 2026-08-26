@@ -2,12 +2,16 @@
  * Константы сайта, доступные в SSR-рендере.
  */
 
-/** Ссылка на Telegram-канал/аккаунт для кнопки «Написать в Telegram». Пусто — кнопка не показывается. */
+/**
+ * Ссылка на Telegram-канал/аккаунт для кнопки «Написать в Telegram». Пусто — кнопка не показывается.
+ * Обычный способ — задать TELEGRAM_USERNAME, ссылка соберётся как t.me/<username>.
+ * Если нужно указать сразу полную ссылку (например, временно на telegram.org, пока
+ * профиля ещё нет) — задать TELEGRAM_LINK напрямую, он имеет приоритет над username.
+ */
 export const TELEGRAM_USERNAME = process.env.TELEGRAM_USERNAME ?? '';
 
-export const TELEGRAM_LINK = TELEGRAM_USERNAME
-  ? `https://t.me/${TELEGRAM_USERNAME}`
-  : '';
+export const TELEGRAM_LINK =
+  process.env.TELEGRAM_LINK || (TELEGRAM_USERNAME ? `https://t.me/${TELEGRAM_USERNAME}` : '');
 
 /**
  * Ссылка на профиль/канал в MAX для кнопки «Написать в MAX». Пусто — кнопка не показывается.

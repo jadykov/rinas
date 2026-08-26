@@ -52,7 +52,8 @@ PUBLIC_PB_PUBLIC_URL=   # публичный адрес PocketBase для бра
 TELEGRAM_BOT_TOKEN=     # бот, принимающий заявки
 TELEGRAM_CHAT_ID=       # чат мастера
 TELEGRAM_USERNAME=
-MAX_LINK=             # полная ссылка на профиль/канал в MAX (кнопка «Написать в MAX»)
+TELEGRAM_LINK=         # альтернатива TELEGRAM_USERNAME — сразу полная ссылка, в приоритете
+MAX_LINK=              # полная ссылка на профиль/канал в MAX (кнопка «Написать в MAX»)
 YANDEX_METRIKA_ID=      # счётчик Метрики (form_send / telegram_click)
 ```
 
