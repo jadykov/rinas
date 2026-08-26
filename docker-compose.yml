@@ -1,0 +1,39 @@
+services:
+  pocketbase:
+    build:
+      context: .
+      dockerfile: Dockerfile.pocketbase
+    container_name: pb
+    restart: unless-stopped
+    volumes:
+      - pb_data:/pb/pb_data
+    expose:
+      - "8090"
+
+  web:
+    image: node:24-alpine
+    container_name: web
+    restart: unless-stopped
+    working_dir: /app
+    volumes:
+      - ./web:/app
+    command: ["node", "server.mjs"]
+    expose:
+      - "4321"
+
+  caddy:
+    image: caddy:2-alpine
+    container_name: caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+
+volumes:
+  pb_data:
+  caddy_data:
+  caddy_config:

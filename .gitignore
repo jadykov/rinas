@@ -1,0 +1,14 @@
+# Окружение и секреты
+.env
+.env.*
+
+# Данные PocketBase
+pb_data/
+
+# Зависимости и сборка
+node_modules/
+dist/
+.pocketbase/
+
+# Системное
+.DS_Store

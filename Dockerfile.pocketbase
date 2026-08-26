@@ -1,0 +1,29 @@
+FROM alpine:3.20 AS builder
+
+ARG PB_VERSION=0.40.1
+ARG PB_TARGETARCH=amd64
+
+RUN apk add --no-cache curl unzip \
+    && curl -fsSL -o /tmp/pocketbase.zip \
+    https://github.com/pocketbase/pocketbase/releases/download/v${PB_VERSION}/pocketbase_${PB_VERSION}_linux_${PB_TARGETARCH}.zip \
+    && unzip /tmp/pocketbase.zip -d /pb \
+    && chmod +x /pb/pocketbase \
+    && rm /tmp/pocketbase.zip
+
+FROM alpine:3.20
+
+RUN apk add --no-cache ca-certificates su-exec \
+    && adduser -D -H -s /bin/false pbuser
+
+WORKDIR /pb
+
+COPY --from=builder /pb/pocketbase /pb/pocketbase
+COPY docker/pocketbase/entrypoint.sh /usr/local/bin/entrypoint.sh
+
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+EXPOSE 8090
+
+VOLUME /pb/pb_data
+
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]

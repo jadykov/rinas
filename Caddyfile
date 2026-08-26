@@ -1,0 +1,19 @@
+ДОМЕН.ru {
+    # Статичный период для внутренних кэшей Caddy (не влияет на HTTPS-сертификаты)
+    encode zstd gzip
+
+    # PocketBase API
+    handle /api/* {
+        reverse_proxy pocketbase:8090
+    }
+
+    # Админка PocketBase
+    handle /_/* {
+        reverse_proxy pocketbase:8090
+    }
+
+    # Всё остальное — фронт (Astro)
+    handle {
+        reverse_proxy web:4321
+    }
+}
