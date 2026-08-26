@@ -1,0 +1,12 @@
+.git
+.env
+.env.*
+pb_data/
+backups/
+web/node_modules
+web/dist
+web/.astro
+web/.pocketbase
+node_modules
+dist
+.astro

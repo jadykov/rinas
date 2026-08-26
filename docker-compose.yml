@@ -13,19 +13,17 @@ services:
       - "8090"
 
   web:
-    image: node:24-alpine
+    build:
+      context: .
+      dockerfile: Dockerfile.web
     container_name: web
     restart: unless-stopped
-    working_dir: /app
     environment:
       - HOST=0.0.0.0
       - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
       - TELEGRAM_CHAT_ID=${TELEGRAM_CHAT_ID}
       - TELEGRAM_USERNAME=${TELEGRAM_USERNAME}
       - YANDEX_METRIKA_ID=${YANDEX_METRIKA_ID}
-    volumes:
-      - ./web:/app
-    command: ["node", "dist/server/entry.mjs"]
     ports:
       - "127.0.0.1:4321:4321"
     expose:
