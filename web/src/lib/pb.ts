@@ -4,7 +4,19 @@
  */
 
 // Внутри docker-сети PocketBase доступен по имени сервиса `pocketbase:8090`.
+// Используется только для серверных (SSR) запросов — изнутри docker-сети.
 const PB_URL = process.env.PUBLIC_PB_URL ?? 'http://pocketbase:8090';
+
+// Публичный базовый URL для файлов (фото, 3D-моделей), который видит браузер.
+// Отдельный от PB_URL: внутреннее имя `pocketbase` браузер разрешить не может,
+// а `localhost` — это адрес сервера, не клиента.
+// Без env берётся origin текущего запроса (Astro.url) — работает на любом домене:
+// Caddy на проде проксирует /api/* на PocketBase.
+// При необходимости задать вручную: PUBLIC_PB_PUBLIC_URL.
+const PB_PUBLIC_URL =
+  process.env.PUBLIC_PB_PUBLIC_URL ??
+  (globalThis as { __pbOrigin?: string }).__pbOrigin ??
+  '';
 
 export interface Product {
   id: string;
@@ -59,7 +71,10 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
   return data.items?.[0] ?? null;
 }
 
-/** Полный URL файла (фото, 3D-модель) из коллекции PocketBase. */
-export function fileUrl(collectionName: string, recordId: string, filename: string): string {
-  return `${PB_URL}/api/files/${collectionName}/${recordId}/${encodeURIComponent(filename)}`;
+/** Полный URL файла (фото, 3D-модель) из коллекции PocketBase, доступный браузеру.
+ * Базовый адрес: env PUBLIC_PB_PUBLIC_URL, либо origin текущего запроса (origin).
+ * В SSR origin передаётся из Astro.url.origin на странице. */
+export function fileUrl(collectionName: string, recordId: string, filename: string, origin = ''): string {
+  const base = (PB_PUBLIC_URL || origin || PB_URL).replace(/\/+$/, '');
+  return `${base}/api/files/${collectionName}/${recordId}/${encodeURIComponent(filename)}`;
 }

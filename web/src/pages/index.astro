@@ -30,7 +30,7 @@ const description =
       {
         featured.map((p) => {
           const mainPhoto = p.photos?.[0]
-            ? fileUrl('products', p.id, p.photos[0])
+            ? fileUrl('products', p.id, p.photos[0], Astro.url.origin)
             : null;
           return (
             <li class="card">

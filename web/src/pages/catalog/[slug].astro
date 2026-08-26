@@ -29,11 +29,11 @@ const dimensions =
 
 const seoTitle = product.seo_title || `${product.title} из массива дерева`;
 const seoDescription = product.seo_description || product.description || '';
-const photos = (product.photos ?? []).map((f) => fileUrl('products', product.id, f));
+const photos = (product.photos ?? []).map((f) => fileUrl('products', product.id, f, Astro.url.origin));
 const mainPhoto = photos[0] ?? null;
 
 const modelUrl = product.model_3d
-  ? fileUrl('products', product.id, product.model_3d)
+  ? fileUrl('products', product.id, product.model_3d, Astro.url.origin)
   : '';
 
 const h1Title = diameterInfo && !product.title.includes('горшк')
