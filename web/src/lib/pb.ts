@@ -43,3 +43,23 @@ export async function getProducts(): Promise<Product[]> {
   const data = await res.json();
   return data.items ?? [];
 }
+
+/** Возвращает товар по slug, или null, если такого товара нет. */
+export async function getProductBySlug(slug: string): Promise<Product | null> {
+  const res = await fetch(
+    `${PB_URL}/api/collections/products/records?filter=${encodeURIComponent(`(slug="${slug}")`)}`,
+    { headers: { Accept: 'application/json' } },
+  );
+
+  if (!res.ok) {
+    throw new Error(`Ошибка PocketBase: ${res.status} ${res.statusText}`);
+  }
+
+  const data = await res.json();
+  return data.items?.[0] ?? null;
+}
+
+/** Полный URL файла (фото, 3D-модель) из коллекции PocketBase. */
+export function fileUrl(collectionName: string, recordId: string, filename: string): string {
+  return `${PB_URL}/api/files/${collectionName}/${recordId}/${encodeURIComponent(filename)}`;
+}

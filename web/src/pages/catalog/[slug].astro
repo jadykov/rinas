@@ -1,0 +1,67 @@
+---
+import { getProductBySlug, fileUrl } from '../../lib/pb';
+
+const { slug } = Astro.params;
+
+let product = null;
+if (slug) {
+  product = await getProductBySlug(slug);
+}
+
+if (!product) {
+  return Astro.rewrite('/404');
+}
+
+const typeLabel = product.type ?? '';
+const materialLabel = product.material ?? '';
+const diameterInfo =
+  product.pot_diameter_min && product.pot_diameter_max
+    ? `${product.pot_diameter_min}–${product.pot_diameter_max} см`
+    : product.pot_diameter_min
+      ? `от ${product.pot_diameter_min} см`
+      : product.pot_diameter_max
+        ? `до ${product.pot_diameter_max} см`
+        : null;
+const dimensions =
+  product.height && product.width ? `${product.height} × ${product.width} см` : null;
+
+const seoTitle = product.seo_title || `${product.title} из массива дерева`;
+const seoDescription = product.seo_description || product.description || '';
+const mainPhoto = product.photos?.[0] ? fileUrl('products', product.id, product.photos[0]) : null;
+---
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{seoTitle}</title>
+    <meta name="description" content={seoDescription} />
+    {mainPhoto && <meta property="og:image" content={mainPhoto} />}
+  </head>
+  <body>
+    <a href="/catalog">← Назад в каталог</a>
+    <h1>{product.title}</h1>
+    {product.price_from && <p><strong>от {product.price_from} ₽</strong></p>}
+    <p><em>{seoDescription}</em></p>
+
+    {mainPhoto ? (
+      <img src={mainPhoto} alt={product.title} />
+    ) : (
+      <p>Фото скоро добавят</p>
+    )}
+
+    {product.description && <p>{product.description}</p>}
+
+    <h2>Характеристики</h2>
+    <ul>
+      {typeLabel && <li>Тип: {typeLabel}</li>}
+      {materialLabel && <li>Материал: {materialLabel}</li>}
+      {diameterInfo && <li>Диаметр горшка: {diameterInfo}</li>}
+      {dimensions && <li>Размер: {dimensions}</li>}
+      {product.in_stock !== null && <li>Наличие: {product.in_stock ? 'в наличии' : 'под заказ'}</li>}
+      {product.lead_time_days && <li>Срок изготовления: {product.lead_time_days} дней</li>}
+    </ul>
+
+    <a href="/custom">Заказать похожее</a>
+  </body>
+</html>
