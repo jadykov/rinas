@@ -35,9 +35,9 @@ const canonical = `${Astro.url.origin}${Astro.url.pathname}`;
         <a class="logo" href="/">Кашпо<span> из массива</span></a>
         <nav class="nav" aria-label="Основная навигация">
           <a href="/catalog">Каталог</a>
-          <a href="/custom">На заказ</a>
           <a href="/info">Доставка</a>
           <a href="/about">О нас</a>
+          <a class="nav__cta" href="/custom">На заказ</a>
         </nav>
       </div>
     </header>
@@ -99,8 +99,8 @@ const canonical = `${Astro.url.origin}${Astro.url.pathname}`;
   }
 
   .nav a {
-    color: var(--text-muted);
-    font-weight: 500;
+    color: var(--text);
+    font-weight: 600;
     /* Пункт меню не разрывается внутри себя на два слова */
     white-space: nowrap;
   }
@@ -108,6 +108,18 @@ const canonical = `${Astro.url.origin}${Astro.url.pathname}`;
   .nav a:hover {
     color: var(--accent-strong);
     text-decoration: none;
+  }
+
+  .nav a.nav__cta {
+    padding: 0.375rem 1rem;
+    background: var(--accent);
+    color: #fff;
+    border-radius: 999px;
+  }
+
+  .nav a.nav__cta:hover {
+    background: var(--accent-strong);
+    color: #fff;
   }
 
   .footer {

@@ -5,8 +5,9 @@ import LeadForm from '../components/LeadForm.astro';
 import PhotoPlaceholder from '../components/PhotoPlaceholder.astro';
 
 const products = await getProducts();
-const featured = products.filter((p) => p.is_featured).slice(0, 3);
-const fallback = featured.length ? featured : products.slice(0, 3);
+const featured = products.filter((p) => p.is_featured);
+const rest = products.filter((p) => !p.is_featured);
+const fallback = [...featured, ...rest].slice(0, 3);
 
 const workshopPage = await getPageBySlug('workshop');
 const workshopPhotos = (workshopPage?.photos ?? []).map((f) =>
@@ -350,7 +351,7 @@ const description =
     }
 
     .hero {
-      padding: 4rem 0 3rem;
+      padding: 3rem 0 2.5rem;
     }
 
     .workshop__grid {
@@ -365,6 +366,14 @@ const description =
   @media (min-width: 960px) {
     .grid {
       grid-template-columns: repeat(3, 1fr);
+    }
+
+    .hero__title {
+      max-width: 22em;
+    }
+
+    .hero__subtitle {
+      max-width: 44em;
     }
 
     .steps__list {
