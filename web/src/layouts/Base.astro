@@ -10,6 +10,7 @@ interface Props {
 
 const { title, description, image } = Astro.props;
 const fullTitle = title ? `${title} — Мастерская кашпо` : 'Мастерская кашпо';
+const canonical = `${Astro.url.origin}${Astro.url.pathname}`;
 ---
 <!doctype html>
 <html lang="ru">
@@ -17,7 +18,13 @@ const fullTitle = title ? `${title} — Мастерская кашпо` : 'Ма
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{fullTitle}</title>
-    {description && <meta name="description" content={description} />}
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta property="og:site_name" content="Мастерская кашпо" />
+    <meta property="og:type" content={image ? 'article' : 'website'} />
+    <meta property="og:title" content={fullTitle} />
+    {description && <meta property="og:description" content={description} />}
+    <meta property="og:url" content={canonical} />
     {image && <meta property="og:image" content={image} />}
   </head>
   <body>

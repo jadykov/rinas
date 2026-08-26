@@ -1,6 +1,6 @@
 # Статус разработки сайта кашпо
 
-Последнее обновление: Фаза 6 завершена.
+Последнее обновление: Фаза 7 завершена.
 
 ## Правила работы
 
@@ -57,8 +57,15 @@
   - Telegram и константы: `web/src/lib/site.ts`, env-переменные `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`, `TELEGRAM_USERNAME` проброшены в `docker-compose.yml` (из `.env`, gitignored).
   - Проверено: POST → 200 и запись в `leads` (в т.ч. с файлом и relation product), honeypot не создаёт заявку, без согласия → 400. Тестовые заявки удалены.
   - Ограничение: Astro блокирует POST без `Origin` (CSRF) — в браузере ок, тесты слать с `Origin`.
-- [ ] **Фаза 7 — SEO** ← СЛЕДУЮЩАЯ
-- [ ] **Фаза 8 — 3D**
+- [x] **Фаза 7 — SEO**
+  - `sitemap.xml` (SSR, `web/src/pages/sitemap.xml.ts`): статичные страницы + карточки товаров из базы, absolute URL из origin запроса.
+  - `robots.txt` (SSR, `web/src/pages/robots.txt.ts`): Allow /, Disallow /_/, ссылка на sitemap.
+  - Canonical + полный Open Graph в `Base.astro` (og:site_name/type/title/description/url/image).
+  - JSON-LD `Product` в карточке товара (`[slug].astro`) с `offers.priceCurrency=RUB` и availability InStock/MadeToOrder.
+  - H1 в карточке дополняется диаметром: «Напольное кашпо из массива дуба под горшок 25–35 см».
+  - SEO-тексты `/custom`: title и lead под запросы «кашпо на заказ», «по своим размерам», «нестандартного размера».
+  - Проверено: sitemap.xml и robots.txt → 200, canonical/og в HTML, JSON-LD в карточке.
+- [ ] **Фаза 8 — 3D** ← СЛЕДУЮЩАЯ
 - [ ] **Фаза 9 — Финал**
 
 ---
@@ -75,7 +82,7 @@
   - установка: `docker run --rm -v "$PWD/web:/app" -w /app node:24-alpine sh -c "npm install"`
   - сборка: `docker run --rm -v "$PWD/web:/app" -w /app node:24-alpine sh -c "npm run build"`
   - после сборки перезапустить контейнер: `docker compose restart web`
-- `web/src/pages/` — страницы Astro: `index.astro` (главная), `catalog.astro`, `catalog/[slug].astro`, `custom.astro`, `info.astro`, `about.astro`, `privacy.astro`, `404.astro`, `api/lead.ts` (POST-приём заявок). `web/src/components/LeadForm.astro` — форма заявки. `web/src/layouts/Base.astro` — шапка+подвал. `web/src/styles/global.css` — CSS-переменные. `web/src/lib/pb.ts` — клиент PocketBase. `web/src/lib/site.ts` — константы сайта (Telegram-ссылка).
+- `web/src/pages/` — страницы Astro: `index.astro` (главная), `catalog.astro`, `catalog/[slug].astro`, `custom.astro`, `info.astro`, `about.astro`, `privacy.astro`, `404.astro`, `api/lead.ts` (POST-приём заявок), `sitemap.xml.ts`, `robots.txt.ts` (SSR). `web/src/components/LeadForm.astro` — форма заявки. `web/src/layouts/Base.astro` — шапка+подвал + canonical/OG. `web/src/styles/global.css` — CSS-переменные. `web/src/lib/pb.ts` — клиент PocketBase. `web/src/lib/site.ts` — константы сайта (Telegram-ссылка).
 
 ### Текущее состояние (что уже работает)
 
@@ -84,26 +91,23 @@
 - Дизайн: mobile-first, CSS-переменные, акцентный цвет `#9a6b3f`.
 - Формы: компонент `web/src/components/LeadForm.astro` (на `/`, `/custom`, `/about`, в карточке), эндпоинт `web/src/pages/api/lead.ts` (валидация + honeypot + запись в `leads` + Telegram). Проверено POST-ом вручную.
 - Telegram: токен/чат через env (`TELEGRAM_*` из `.env`, gitignored, проброшены в docker-compose). `.env` сейчас пустой — заполнить бот у `@BotFather` (чеклист владельца).
+- SEO: `sitemap.xml`, `robots.txt` (SSR-эндпоинты), canonical + Open Graph в `Base.astro`, JSON-LD `Product` в карточке, H1 с диаметром горшка, SEO-тексты `/custom`.
 
-### Следующая фаза 7 — SEO (из docs/PLAN.md)
+### Следующая фаза 8 — 3D (из docs/PLAN.md)
 
-- `sitemap.xml`, `robots.txt`, `canonical` на всех страницах
-- `<title>` и `<meta description>` из полей товара
-- Open Graph и `og:image` (первое фото товара)
-- **JSON-LD разметка `Product`** в карточке — даёт расширенный сниппет в Яндексе и Google
-- H1 человеческим языком: «Напольное кашпо из массива дуба под горшок 30 см»
-- Заголовок и текст `/custom` под запросы: «кашпо на заказ», «кашпо по своим размерам», «кашпо нестандартного размера»
+- `@google/model-viewer` в карточке товара, если заполнено поле `model_3d` (`.glb`).
+- **Загружать модель только по клику на кнопку «Смотреть в 3D»**, до клика — превью-заглушка (не грузить модель при открытии страницы).
+- Модели: снять изделие через Polycam/RealityScan (фотограмметрия), сжать `gltf-transform` до 2–5 МБ, залить в поле `model_3d`. На 3–5 топовых работ.
+- Ограничение: у текущих 3 товаров поле `model_3d` пустое — 3D-моделей пока нет (чеклист владельца).
 
 ### Чего НЕТ (не делать): корзина/оплата, личный кабинет, Telegram-бот-каталог, ИИ-чат, реклама, мультиязычность, тёмная тема, Next/React/Vue/Tailwind.
 
-### Порядок на Фазу 7
+### Порядок на Фазу 8
 
-1. Прочитать `docs/PLAN.md` (раздел 4, Фаза 7).
+1. Прочитать `docs/PLAN.md` (раздел 4, Фаза 8).
 2. Проверить, что инфраструктура поднята: `docker compose up -d`.
-3. `sitemap.xml` (динамические URL из `products`), `robots.txt`, canonical в `Base.astro`.
-4. SEO-поля товара (`seo_title`, `seo_description`, `og:image`) — частично уже в `[slug].astro`.
-5. JSON-LD `Product` в карточке товара.
-6. Собрать внутри Docker, перезапустить `web`, проверить глазами, затем `docs/STATUS.md` + коммит + push.
+3. Добавить `@google/model-viewer` в карточку товара (`web/src/pages/catalog/[slug].astro`), показать только по клику на «Смотреть в 3D», до клика — превью-заглушка.
+4. Собрать внутри Docker, перезапустить `web`, проверить глазами, затем `docs/STATUS.md` + коммит + push.
 
 ## Как продолжить работу
 

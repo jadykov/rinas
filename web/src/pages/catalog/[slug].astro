@@ -31,8 +31,29 @@ const seoTitle = product.seo_title || `${product.title} из массива де
 const seoDescription = product.seo_description || product.description || '';
 const photos = (product.photos ?? []).map((f) => fileUrl('products', product.id, f));
 const mainPhoto = photos[0] ?? null;
+
+const h1Title = diameterInfo && !product.title.includes('горшк')
+  ? `${product.title} под горшок ${diameterInfo}`
+  : product.title;
+
+const productJsonLd = JSON.stringify({
+  '@context': 'https://schema.org/',
+  '@type': 'Product',
+  name: product.title,
+  description: seoDescription,
+  image: mainPhoto ?? undefined,
+  offers: {
+    '@type': 'Offer',
+    price: product.price_from ?? undefined,
+    priceCurrency: 'RUB',
+    availability: product.in_stock
+      ? 'https://schema.org/InStock'
+      : 'https://schema.org/MadeToOrder',
+  },
+});
 ---
 <Base title={seoTitle} description={seoDescription} image={mainPhoto}>
+  <script type="application/ld+json" set:html={productJsonLd} />
   <article class="page container">
     <a class="back" href="/catalog">← В каталог</a>
 
@@ -46,7 +67,7 @@ const mainPhoto = photos[0] ?? null;
       </div>
 
       <div class="card__content">
-        <h1 class="card__title">{product.title}</h1>
+        <h1 class="card__title">{h1Title}</h1>
 
         {product.price_from && (
           <p class="card__price">от {product.price_from} ₽</p>
