@@ -1,5 +1,6 @@
 ---
 import { getProductBySlug, fileUrl } from '../../lib/pb';
+import Base from '../../layouts/Base.astro';
 
 const { slug } = Astro.params;
 
@@ -27,41 +28,194 @@ const dimensions =
 
 const seoTitle = product.seo_title || `${product.title} из массива дерева`;
 const seoDescription = product.seo_description || product.description || '';
-const mainPhoto = product.photos?.[0] ? fileUrl('products', product.id, product.photos[0]) : null;
+const photos = (product.photos ?? []).map((f) => fileUrl('products', product.id, f));
+const mainPhoto = photos[0] ?? null;
 ---
-<!doctype html>
-<html lang="ru">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{seoTitle}</title>
-    <meta name="description" content={seoDescription} />
-    {mainPhoto && <meta property="og:image" content={mainPhoto} />}
-  </head>
-  <body>
-    <a href="/catalog">← Назад в каталог</a>
-    <h1>{product.title}</h1>
-    {product.price_from && <p><strong>от {product.price_from} ₽</strong></p>}
-    <p><em>{seoDescription}</em></p>
+<Base title={seoTitle} description={seoDescription} image={mainPhoto}>
+  <article class="page container">
+    <a class="back" href="/catalog">← В каталог</a>
 
-    {mainPhoto ? (
-      <img src={mainPhoto} alt={product.title} />
-    ) : (
-      <p>Фото скоро добавят</p>
-    )}
+    <div class="card">
+      <div class="card__media">
+        {mainPhoto ? (
+          <img class="card__img" src={mainPhoto} alt={product.title} />
+        ) : (
+          <div class="card__img card__img--placeholder">Фото скоро добавят</div>
+        )}
+      </div>
 
-    {product.description && <p>{product.description}</p>}
+      <div class="card__content">
+        <h1 class="card__title">{product.title}</h1>
 
-    <h2>Характеристики</h2>
-    <ul>
-      {typeLabel && <li>Тип: {typeLabel}</li>}
-      {materialLabel && <li>Материал: {materialLabel}</li>}
-      {diameterInfo && <li>Диаметр горшка: {diameterInfo}</li>}
-      {dimensions && <li>Размер: {dimensions}</li>}
-      {product.in_stock !== null && <li>Наличие: {product.in_stock ? 'в наличии' : 'под заказ'}</li>}
-      {product.lead_time_days && <li>Срок изготовления: {product.lead_time_days} дней</li>}
-    </ul>
+        {product.price_from && (
+          <p class="card__price">от {product.price_from} ₽</p>
+        )}
 
-    <a href="/custom">Заказать похожее</a>
-  </body>
-</html>
+        <p class="card__desc">{seoDescription}</p>
+
+        {product.description && <p class="card__text">{product.description}</p>}
+
+        <h2 class="card__h2">Характеристики</h2>
+        <dl class="specs">
+          {typeLabel && (
+            <>
+              <dt>Тип</dt>
+              <dd>{typeLabel}</dd>
+            </>
+          )}
+          {materialLabel && (
+            <>
+              <dt>Материал</dt>
+              <dd>{materialLabel}</dd>
+            </>
+          )}
+          {diameterInfo && (
+            <>
+              <dt>Диаметр горшка</dt>
+              <dd>{diameterInfo}</dd>
+            </>
+          )}
+          {dimensions && (
+            <>
+              <dt>Размер</dt>
+              <dd>{dimensions}</dd>
+            </>
+          )}
+          {product.in_stock !== null && (
+            <>
+              <dt>Наличие</dt>
+              <dd>{product.in_stock ? 'в наличии' : 'под заказ'}</dd>
+            </>
+          )}
+          {product.lead_time_days && (
+            <>
+              <dt>Срок изготовления</dt>
+              <dd>{product.lead_time_days} дней</dd>
+            </>
+          )}
+        </dl>
+
+        <a class="btn" href="/custom">Заказать похожее</a>
+      </div>
+    </div>
+  </article>
+</Base>
+
+<style>
+  .page {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+  }
+
+  .back {
+    display: inline-block;
+    margin-bottom: 1.25rem;
+    color: var(--text-muted);
+    font-size: var(--text-sm);
+  }
+
+  .card {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+
+  .card__img {
+    aspect-ratio: 4 / 5;
+    width: 100%;
+    object-fit: cover;
+  }
+
+  .card__img--placeholder {
+    display: grid;
+    place-items: center;
+    background: var(--bg);
+    color: var(--text-muted);
+    font-size: var(--text-sm);
+  }
+
+  .card__content {
+    padding: 1.5rem var(--gutter);
+  }
+
+  .card__title {
+    margin: 0 0 0.5rem;
+    font-size: var(--text-2xl);
+  }
+
+  .card__price {
+    margin: 0 0 1rem;
+    font-size: var(--text-xl);
+    color: var(--accent-strong);
+    font-weight: 700;
+  }
+
+  .card__desc {
+    color: var(--text-muted);
+    font-style: italic;
+    margin: 0 0 1rem;
+  }
+
+  .card__text {
+    margin: 0 0 1.5rem;
+  }
+
+  .card__h2 {
+    margin: 0 0 0.75rem;
+    font-size: var(--text-lg);
+  }
+
+  .specs {
+    margin: 0 0 1.5rem;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.5rem 1rem;
+    border-top: 1px solid var(--border);
+    padding-top: 1rem;
+  }
+
+  .specs dt {
+    color: var(--text-muted);
+  }
+
+  .specs dd {
+    margin: 0;
+    text-align: right;
+  }
+
+  .btn {
+    display: inline-block;
+    padding: 0.875rem 1.5rem;
+    background: var(--accent);
+    color: #fff;
+    border-radius: 999px;
+    font-weight: 600;
+    text-align: center;
+  }
+
+  .btn:hover {
+    background: var(--accent-strong);
+    text-decoration: none;
+  }
+
+  @media (min-width: 768px) {
+    .card {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .card__media {
+      background: var(--bg);
+    }
+
+    .card__img {
+      height: 100%;
+    }
+
+    .card__content {
+      padding: 2rem;
+    }
+  }
+</style>

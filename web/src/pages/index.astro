@@ -1,0 +1,241 @@
+---
+import { getProducts, fileUrl } from '../lib/pb';
+import Base from '../layouts/Base.astro';
+
+const products = await getProducts();
+const featured = products.filter((p) => p.is_featured).slice(0, 3);
+const fallback = featured.length ? featured : products.slice(0, 3);
+
+const description =
+  'Кашпо из массива дерева на заказ: любой размер, любая сложность. Напольные, настольные и подвесные — под ваш горшок.';
+---
+<Base title="" description={description}>
+  <section class="hero">
+    <div class="container hero__inner">
+      <h1 class="hero__title">Кашпо из массива дерева по вашим размерам</h1>
+      <p class="hero__subtitle">
+        Делаем вручную вдвоём. Любой размер, любая сложность — кашпо точно под ваш горшок и интерьер.
+      </p>
+      <div class="hero__actions">
+        <a class="btn btn--primary" href="/custom">Заказать кашпо</a>
+        <a class="btn btn--ghost" href="/catalog">Смотреть работы</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="page container">
+    <h2 class="section__title">Лучшие работы</h2>
+    <ul class="grid">
+      {
+        featured.map((p) => {
+          const mainPhoto = p.photos?.[0]
+            ? fileUrl('products', p.id, p.photos[0])
+            : null;
+          return (
+            <li class="card">
+              <a class="card__link" href={`/catalog/${p.slug}`}>
+                {mainPhoto ? (
+                  <img class="card__img" src={mainPhoto} alt={p.title} loading="lazy" />
+                ) : (
+                  <div class="card__img card__img--placeholder">Фото скоро</div>
+                )}
+                <div class="card__body">
+                  <h3 class="card__title">{p.title}</h3>
+                  {p.price_from && <p class="card__price">от {p.price_from} ₽</p>}
+                </div>
+              </a>
+            </li>
+          );
+        })
+      }
+    </ul>
+  </section>
+
+  <section class="steps">
+    <div class="container">
+      <h2 class="section__title">Как заказать</h2>
+      <ol class="steps__list">
+        <li>Расскажите, какой горшок и интерьер</li>
+        <li>Обсудим размер, дерево и сроки</li>
+        <li>Сделаем и покажем до отправки</li>
+        <li>Получите кашпо — перевод или лично</li>
+      </ol>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .hero {
+    padding: 4rem 0 3rem;
+    background:
+      radial-gradient(circle at top right, rgba(154, 107, 63, 0.12), transparent 60%),
+      var(--bg);
+  }
+
+  .hero__title {
+    font-size: var(--text-3xl);
+    margin: 0 0 1rem;
+    max-width: 14em;
+  }
+
+  .hero__subtitle {
+    font-size: var(--text-lg);
+    color: var(--text-muted);
+    max-width: 32em;
+    margin: 0 0 2rem;
+  }
+
+  .hero__actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .btn {
+    display: inline-block;
+    padding: 0.875rem 1.5rem;
+    border-radius: 999px;
+    font-weight: 600;
+    text-align: center;
+  }
+
+  .btn--primary {
+    background: var(--accent);
+    color: #fff;
+  }
+
+  .btn--primary:hover {
+    background: var(--accent-strong);
+    text-decoration: none;
+  }
+
+  .btn--ghost {
+    border: 1px solid var(--accent);
+    color: var(--accent-strong);
+  }
+
+  .btn--ghost:hover {
+    background: var(--bg-elevated);
+    text-decoration: none;
+  }
+
+  .page {
+    padding-top: 3rem;
+    padding-bottom: 1rem;
+  }
+
+  .section__title {
+    margin: 0 0 1.5rem;
+  }
+
+  .grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .card {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+
+  .card__link {
+    display: block;
+    color: inherit;
+  }
+
+  .card__link:hover {
+    text-decoration: none;
+  }
+
+  .card__img {
+    aspect-ratio: 4 / 5;
+    width: 100%;
+    object-fit: cover;
+  }
+
+  .card__img--placeholder {
+    display: grid;
+    place-items: center;
+    background: var(--bg);
+    color: var(--text-muted);
+    font-size: var(--text-sm);
+  }
+
+  .card__body {
+    padding: 1rem 1.25rem 1.25rem;
+  }
+
+  .card__title {
+    margin: 0 0 0.25rem;
+    font-size: var(--text-lg);
+  }
+
+  .card__price {
+    margin: 0;
+    color: var(--accent-strong);
+    font-weight: 600;
+  }
+
+  .steps {
+    padding: 2rem 0 3rem;
+  }
+
+  .steps__list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    counter-reset: step;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .steps__list li {
+    counter-increment: step;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem;
+  }
+
+  .steps__list li::before {
+    content: counter(step);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #fff;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+  }
+
+  @media (min-width: 640px) {
+    .grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .hero__actions {
+      flex-direction: row;
+    }
+  }
+
+  @media (min-width: 960px) {
+    .grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .steps__list {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+</style>

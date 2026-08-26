@@ -1,16 +1,38 @@
 ---
 Astro.response.status = 404;
+import Base from '../layouts/Base.astro';
 ---
-<!doctype html>
-<html lang="ru">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Страница не найдена</title>
-  </head>
-  <body>
+<Base title="Страница не найдена">
+  <section class="page container">
     <h1>Страница не найдена</h1>
     <p>Такого товара нет или он был удалён.</p>
-    <a href="/catalog">Перейти в каталог</a>
-  </body>
-</html>
+    <a class="btn" href="/catalog">Перейти в каталог</a>
+  </section>
+</Base>
+
+<style>
+  .page {
+    padding-top: 4rem;
+    padding-bottom: 4rem;
+    text-align: center;
+  }
+
+  .page p {
+    color: var(--text-muted);
+    margin-bottom: 2rem;
+  }
+
+  .btn {
+    display: inline-block;
+    padding: 0.875rem 1.5rem;
+    background: var(--accent);
+    color: #fff;
+    border-radius: 999px;
+    font-weight: 600;
+  }
+
+  .btn:hover {
+    background: var(--accent-strong);
+    text-decoration: none;
+  }
+</style>

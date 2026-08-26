@@ -1,0 +1,134 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description?: string;
+  image?: string;
+}
+
+const { title, description, image } = Astro.props;
+const fullTitle = title ? `${title} — Мастерская кашпо` : 'Мастерская кашпо';
+---
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    {description && <meta name="description" content={description} />}
+    {image && <meta property="og:image" content={image} />}
+  </head>
+  <body>
+    <header class="header">
+      <div class="container header__inner">
+        <a class="logo" href="/">Кашпо<span> из массива</span></a>
+        <nav class="nav" aria-label="Основная навигация">
+          <a href="/catalog">Каталог</a>
+          <a href="/custom">На заказ</a>
+          <a href="/info">Доставка</a>
+          <a href="/about">О нас</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <slot />
+    </main>
+
+    <footer class="footer">
+      <div class="container footer__inner">
+        <p>© {new Date().getFullYear()} Мастерская кашпо. Кашпо из массива дерева на заказ.</p>
+        <nav class="footer__links" aria-label="Служебные страницы">
+          <a href="/info">Доставка и оплата</a>
+          <a href="/privacy">Политика конфиденциальности</a>
+        </nav>
+      </div>
+    </footer>
+  </body>
+</html>
+
+<style>
+  .header {
+    background: var(--bg-elevated);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .header__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+  }
+
+  .logo {
+    font-family: var(--font-display);
+    font-size: var(--text-lg);
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .logo span {
+    color: var(--accent);
+  }
+
+  .nav {
+    display: flex;
+    gap: 1rem;
+    font-size: var(--text-sm);
+  }
+
+  .nav a {
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+
+  .nav a:hover {
+    color: var(--accent-strong);
+    text-decoration: none;
+  }
+
+  .footer {
+    margin-top: 4rem;
+    padding: 2rem 0;
+    background: var(--bg-elevated);
+    border-top: 1px solid var(--border);
+    color: var(--text-muted);
+    font-size: var(--text-sm);
+  }
+
+  .footer__inner {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .footer p {
+    margin: 0;
+  }
+
+  .footer__links {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .footer__links a {
+    color: var(--text-muted);
+  }
+
+  @media (min-width: 768px) {
+    .footer__inner {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .footer__links {
+      flex-direction: row;
+      gap: 1.25rem;
+    }
+  }
+</style>
