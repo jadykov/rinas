@@ -328,15 +328,19 @@ const description =
 
   .steps__list li {
     counter-increment: step;
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
     background: var(--bg-elevated);
     border: 1px solid var(--border);
     border-radius: var(--radius);
-    padding: 1.25rem;
+    padding: 0.875rem 1.25rem;
   }
 
   .steps__list li::before {
     content: counter(step);
     display: flex;
+    flex-shrink: 0;
     align-items: center;
     justify-content: center;
     width: 2rem;
@@ -345,7 +349,6 @@ const description =
     background: var(--accent);
     color: #fff;
     font-weight: 700;
-    margin-bottom: 0.75rem;
   }
 
   @media (min-width: 640px) {
