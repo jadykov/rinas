@@ -96,8 +96,15 @@ const description =
           <li class="review">
             {r.rating && (
               <p class="review__rating" aria-label={`Оценка ${r.rating} из 5`}>
-                {'★'.repeat(r.rating)}
-                {'☆'.repeat(Math.max(0, 5 - r.rating))}
+                {(() => {
+                  const stars = Math.max(0, Math.min(5, Math.round(r.rating!)));
+                  return (
+                    <>
+                      {'★'.repeat(stars)}
+                      {'☆'.repeat(5 - stars)}
+                    </>
+                  );
+                })()}
               </p>
             )}
             <p class="review__text">{r.text}</p>
