@@ -1,7 +1,8 @@
 ---
 import '../styles/global.css';
 import Metrics from '../components/Metrics.astro';
-import { TELEGRAM_LINK } from '../lib/site';
+import SocialBadge from '../components/SocialBadge.astro';
+import { TELEGRAM_LINK, MAX_LINK } from '../lib/site';
 
 interface Props {
   title: string;
@@ -63,12 +64,17 @@ const canonical = `${Astro.url.origin}${Astro.url.pathname}`;
         <nav class="footer__links" aria-label="Служебные страницы">
           <a href="/info">Доставка и оплата</a>
           <a href="/privacy">Политика конфиденциальности</a>
-          {TELEGRAM_LINK && (
-            <a href={TELEGRAM_LINK} target="_blank" rel="noopener" data-metric="telegram_click">
-              Написать в Telegram
-            </a>
-          )}
         </nav>
+        {(TELEGRAM_LINK || MAX_LINK) && (
+          <div class="footer__social" aria-label="Мы в мессенджерах">
+            {TELEGRAM_LINK && (
+              <SocialBadge href={TELEGRAM_LINK} icon="telegram" label="Написать в Telegram" metric="telegram_click" />
+            )}
+            {MAX_LINK && (
+              <SocialBadge href={MAX_LINK} icon="max" label="Написать в MAX" metric="max_click" />
+            )}
+          </div>
+        )}
       </div>
     </footer>
   </body>
@@ -172,6 +178,11 @@ const canonical = `${Astro.url.origin}${Astro.url.pathname}`;
 
   .footer__links a {
     color: var(--text-muted);
+  }
+
+  .footer__social {
+    display: flex;
+    gap: 0.5rem;
   }
 
   @media (min-width: 768px) {

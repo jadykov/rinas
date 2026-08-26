@@ -1,0 +1,62 @@
+---
+/**
+ * Квадратный значок-кнопка на мессенджер (Telegram, MAX), в стиле сайта:
+ * закруглённый квадрат с акцентным фоном, светлый силуэт внутри —
+ * та же визуальная манера, что и мини-логотип в шапке.
+ */
+interface Props {
+  href: string;
+  label: string;
+  icon: 'telegram' | 'max';
+  metric?: string;
+}
+
+const { href, label, icon, metric } = Astro.props;
+---
+<a
+  class="social-badge"
+  href={href}
+  target="_blank"
+  rel="noopener"
+  aria-label={label}
+  title={label}
+  data-metric={metric}
+>
+  <svg class="social-badge__mark" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <rect width="24" height="24" rx="6" fill="var(--accent)" />
+    {icon === 'telegram' && (
+      <path
+        d="M5 12.2l13-5c.6-.24 1.2.24 1 .9l-2.2 10.7c-.14.68-.9.96-1.44.56l-3.5-2.6-1.9 1.8c-.22.2-.5.16-.6-.1l-.8-2.7-3.4-1.1c-.66-.2-.72-1.1-.16-1.46z"
+        fill="#f6f0e6"
+      />
+    )}
+    {icon === 'max' && (
+      <path
+        d="M6 17V8.6c0-.5.6-.8 1-.5l5 4 5-4c.4-.3 1 0 1 .5V17c0 .4-.3.7-.7.7s-.7-.3-.7-.7v-6.9l-4.2 3.3c-.24.2-.56.2-.8 0L8.4 10.1V17c0 .4-.3.7-.7.7S6 17.4 6 17z"
+        fill="#f6f0e6"
+      />
+    )}
+  </svg>
+</a>
+
+<style>
+  .social-badge {
+    display: inline-flex;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 6px;
+    overflow: hidden;
+    flex-shrink: 0;
+    transition: opacity 0.15s ease;
+  }
+
+  .social-badge:hover {
+    opacity: 0.85;
+  }
+
+  .social-badge__mark {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+</style>

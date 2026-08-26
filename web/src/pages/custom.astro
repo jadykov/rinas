@@ -1,7 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import LeadForm from '../components/LeadForm.astro';
-import { TELEGRAM_LINK } from '../lib/site';
+import { TELEGRAM_LINK, MAX_LINK } from '../lib/site';
 
 const description =
   'Кашпо на заказ по вашим размерам: нестандартного размера, любой сложности, из массива дерева. Сделаем точно под ваш горшок и интерьер.';
@@ -22,10 +22,19 @@ const description =
           <li>Покажем готовое кашпо до отправки</li>
           <li>Оплата переводом или лично при получении</li>
         </ul>
-        {TELEGRAM_LINK && (
-          <a class="custom__tg" href={TELEGRAM_LINK} target="_blank" rel="noopener" data-metric="telegram_click">
-            Написать в Telegram
-          </a>
+        {(TELEGRAM_LINK || MAX_LINK) && (
+          <div class="custom__messengers">
+            {TELEGRAM_LINK && (
+              <a class="custom__msg" href={TELEGRAM_LINK} target="_blank" rel="noopener" data-metric="telegram_click">
+                Написать в Telegram
+              </a>
+            )}
+            {MAX_LINK && (
+              <a class="custom__msg" href={MAX_LINK} target="_blank" rel="noopener" data-metric="max_click">
+                Написать в MAX
+              </a>
+            )}
+          </div>
         )}
       </div>
 
@@ -83,7 +92,13 @@ const description =
     font-weight: 700;
   }
 
-  .custom__tg {
+  .custom__messengers {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .custom__msg {
     display: inline-block;
     padding: 0.875rem 1.5rem;
     border: 1px solid var(--accent);
@@ -92,7 +107,7 @@ const description =
     font-weight: 600;
   }
 
-  .custom__tg:hover {
+  .custom__msg:hover {
     background: var(--bg-elevated);
     text-decoration: none;
   }
