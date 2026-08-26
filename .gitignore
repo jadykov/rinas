@@ -8,6 +8,7 @@ pb_data/
 # Зависимости и сборка
 node_modules/
 dist/
+.astro/
 .pocketbase/
 
 # Системное

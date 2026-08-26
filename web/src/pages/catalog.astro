@@ -1,0 +1,26 @@
+---
+import { getProducts } from '../lib/pb';
+
+const products = await getProducts();
+---
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Каталог кашпо из массива дерева</title>
+  </head>
+  <body>
+    <h1>Каталог кашпо</h1>
+    <ul>
+      {
+        products.map((p) => (
+          <li>
+            <a href={`/catalog/${p.slug}`}>{p.title}</a>
+            {p.price_from ? ` — от ${p.price_from} ₽` : ''}
+          </li>
+        ))
+      }
+    </ul>
+  </body>
+</html>

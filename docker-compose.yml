@@ -17,7 +17,7 @@ services:
     working_dir: /app
     volumes:
       - ./web:/app
-    command: ["node", "server.mjs"]
+    command: ["node", "dist/server/entry.mjs"]
     expose:
       - "4321"
 

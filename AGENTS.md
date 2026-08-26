@@ -53,15 +53,14 @@
 
 ## Версии и окружение
 
-Заполнить после первой установки:
-
 ```
-Node:
-Astro:
-PocketBase:
-Caddy:
-Домен:
-Сервер:
+Node: 24
+Astro: 7.2.7
+@astrojs/node: 11.1.4 (адаптер, standalone)
+PocketBase: 0.40.1
+Caddy: 2
+Домен: плейсхолдер `домен.ru`
+Сервер: локальная среда разработки (Docker), VPS в РФ ещё не задействован
 ```
 
 `.env` (в git не коммитить):
@@ -70,3 +69,18 @@ PUBLIC_PB_URL=
 TELEGRAM_BOT_TOKEN=
 TELEGRAM_CHAT_ID=
 ```
+
+## Запуск и сборка
+
+- Поднять инфраструктуру: `docker compose up -d --build` (в корне `/rinas`).
+- Frontend — Astro SSR в `web/`, выходной артефакт `web/dist/server/entry.mjs`.
+- Контейнер `web` запускает `node dist/server/entry.mjs` — серверный рендеринг идёт из сборки, не из dev-режима.
+- Сборка frontend (`npm install`, `npm run build`) выполняется **внутри Docker-контейнера** (`docker run --rm -v "$PWD/web:/app" -w /app node:24-alpine ...`) — в песочнице разработки DNS на хосте не работает.
+- Кэш `node_modules` и `dist` — не коммитить (уже в `.gitignore`).
+- `PUBLIC_PB_URL` для SSR не задан — берётся дефолт `http://pocketbase:8090` (имя сервиса в docker-сети), см. `web/src/lib/pb.ts`.
+- Порт PocketBase наружу не пробрасывается (только `expose`), доступ через сеть compose или Caddy. Админка `/ _/` — через Caddy, в локальной разработке через временное `docker compose exec` не пробрасывается.
+
+## Структура frontend
+
+- `web/src/pages/*` — страницы Astro (SSR).
+- `web/src/lib/pb.ts` — клиент PocketBase (серверный, без публикации в браузер).
