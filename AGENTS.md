@@ -78,7 +78,7 @@ TELEGRAM_CHAT_ID=
 - Сборка frontend (`npm install`, `npm run build`) выполняется **внутри Docker-контейнера** (`docker run --rm -v "$PWD/web:/app" -w /app node:24-alpine ...`) — в песочнице разработки DNS на хосте не работает.
 - Кэш `node_modules` и `dist` — не коммитить (уже в `.gitignore`).
 - `PUBLIC_PB_URL` для SSR не задан — берётся дефолт `http://pocketbase:8090` (имя сервиса в docker-сети), см. `web/src/lib/pb.ts`.
-- Порт PocketBase наружу не пробрасывается (только `expose`), доступ через сеть compose или Caddy. Админка `/ _/` — через Caddy, в локальной разработке через временное `docker compose exec` не пробрасывается.
+- Для локальной проверки порты проброшены только на `127.0.0.1`: админка PocketBase — `http://localhost:8090/_/`, фронт — `http://localhost:4321/catalog`. На прод `ports` у `pocketbase` и `web` убрать, наружу пускать только Caddy.
 
 ## Структура frontend
 

@@ -7,6 +7,8 @@ services:
     restart: unless-stopped
     volumes:
       - pb_data:/pb/pb_data
+    ports:
+      - "127.0.0.1:8090:8090"
     expose:
       - "8090"
 
@@ -15,9 +17,13 @@ services:
     container_name: web
     restart: unless-stopped
     working_dir: /app
+    environment:
+      - HOST=0.0.0.0
     volumes:
       - ./web:/app
     command: ["node", "dist/server/entry.mjs"]
+    ports:
+      - "127.0.0.1:4321:4321"
     expose:
       - "4321"
 
