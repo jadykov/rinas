@@ -85,6 +85,63 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
   return data.items?.[0] ?? null;
 }
 
+export interface Review {
+  id: string;
+  collectionId: string;
+  collectionName: string;
+  created: string;
+  author: string;
+  text: string;
+  photo: string;
+  rating: number | null;
+  is_published: boolean;
+}
+
+/** Опубликованные отзывы, новые сначала. */
+export async function getReviews(): Promise<Review[]> {
+  const res = await fetch(
+    `${PB_URL}/api/collections/reviews/records?filter=${encodeURIComponent('(is_published=true)')}&sort=-created`,
+    { headers: { Accept: 'application/json' } },
+  );
+
+  if (!res.ok) {
+    throw new Error(`Ошибка PocketBase: ${res.status} ${res.statusText}`);
+  }
+
+  const data = await res.json();
+  return data.items ?? [];
+}
+
+export interface Page {
+  id: string;
+  collectionId: string;
+  collectionName: string;
+  slug: string;
+  title: string;
+  content: string;
+  photos: string[];
+}
+
+/** Статичная страница-запись (тексты/фото без деплоя), или null, если такой страницы нет. */
+export async function getPageBySlug(slug: string): Promise<Page | null> {
+  const filter = `(slug="${escapeFilterValue(slug)}")`;
+  const res = await fetch(
+    `${PB_URL}/api/collections/pages/records?filter=${encodeURIComponent(filter)}`,
+    { headers: { Accept: 'application/json' } },
+  );
+
+  if (res.status === 400) {
+    return null;
+  }
+
+  if (!res.ok) {
+    throw new Error(`Ошибка PocketBase: ${res.status} ${res.statusText}`);
+  }
+
+  const data = await res.json();
+  return data.items?.[0] ?? null;
+}
+
 /** Полный URL файла (фото, 3D-модель) из коллекции PocketBase, доступный браузеру.
  * Базовый адрес: env PUBLIC_PB_PUBLIC_URL, либо origin текущего запроса (origin).
  * В SSR origin передаётся из Astro.url.origin на странице. */

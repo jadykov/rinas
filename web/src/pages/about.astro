@@ -1,6 +1,12 @@
 ---
+import { getPageBySlug, fileUrl } from '../lib/pb';
 import Base from '../layouts/Base.astro';
 import LeadForm from '../components/LeadForm.astro';
+
+const workshopPage = await getPageBySlug('workshop');
+const workshopPhotos = (workshopPage?.photos ?? []).map((f) =>
+  fileUrl('pages', workshopPage!.id, f, Astro.url.origin),
+);
 ---
 <Base title="О нас" description="Мастерская кашпо из массива дерева. Работаем вдвоём, вручную, делаем на заказ любой сложности.">
   <section class="page container">
@@ -30,6 +36,19 @@ import LeadForm from '../components/LeadForm.astro';
         submitText="Отправить"
       />
     </div>
+
+    {workshopPhotos.length > 0 && (
+      <div class="about__gallery">
+        <h2 class="about__gallery-title">Мастерская</h2>
+        <ul class="about__gallery-grid">
+          {workshopPhotos.map((src) => (
+            <li>
+              <img class="about__gallery-img" src={src} alt="Мастерская" loading="lazy" />
+            </li>
+          ))}
+        </ul>
+      </div>
+    )}
   </section>
 </Base>
 
@@ -55,9 +74,43 @@ import LeadForm from '../components/LeadForm.astro';
     max-width: 38em;
   }
 
+  .about__gallery {
+    margin-top: 2.5rem;
+  }
+
+  .about__gallery-title {
+    margin: 0 0 1rem;
+  }
+
+  .about__gallery-grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .about__gallery-img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-radius: var(--radius);
+  }
+
+  @media (min-width: 640px) {
+    .about__gallery-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
   @media (min-width: 900px) {
     .about {
       grid-template-columns: 1fr 1fr;
+    }
+
+    .about__gallery-grid {
+      grid-template-columns: repeat(3, 1fr);
     }
   }
 </style>

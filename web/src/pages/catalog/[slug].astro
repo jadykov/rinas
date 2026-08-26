@@ -2,6 +2,7 @@
 import { getProductBySlug, fileUrl } from '../../lib/pb';
 import Base from '../../layouts/Base.astro';
 import LeadForm from '../../components/LeadForm.astro';
+import PhotoPlaceholder from '../../components/PhotoPlaceholder.astro';
 
 const { slug } = Astro.params;
 
@@ -66,7 +67,10 @@ const productJsonLd = JSON.stringify({
         {mainPhoto ? (
           <img class="card__img" src={mainPhoto} alt={product.title} />
         ) : (
-          <div class="card__img card__img--placeholder">Фото скоро добавят</div>
+          <div class="card__img card__img--placeholder">
+            <PhotoPlaceholder />
+            <span>Фото скоро добавят</span>
+          </div>
         )}
       </div>
 
@@ -132,7 +136,10 @@ const productJsonLd = JSON.stringify({
           {mainPhoto ? (
             <img class="viewer__thumb" src={mainPhoto} alt={product.title} />
           ) : (
-            <div class="viewer__thumb viewer__thumb--placeholder">3D-модель</div>
+            <div class="viewer__thumb viewer__thumb--placeholder">
+              <PhotoPlaceholder />
+              <span>Фото скоро</span>
+            </div>
           )}
           <button class="viewer__cta" type="button" data-viewer-open>
             Смотреть в 3D
@@ -212,8 +219,11 @@ const productJsonLd = JSON.stringify({
   }
 
   .card__img--placeholder {
-    display: grid;
-    place-items: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
     background: var(--bg);
     color: var(--text-muted);
     font-size: var(--text-sm);
@@ -332,8 +342,11 @@ const productJsonLd = JSON.stringify({
   }
 
   .viewer__thumb--placeholder {
-    display: grid;
-    place-items: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
     width: 100%;
     max-height: 180px;
     background: var(--bg-elevated);

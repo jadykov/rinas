@@ -1,8 +1,31 @@
 ---
 import { getProducts, fileUrl } from '../lib/pb';
 import Base from '../layouts/Base.astro';
+import PhotoPlaceholder from '../components/PhotoPlaceholder.astro';
 
 const products = await getProducts();
+
+const types = [...new Set(products.map((p) => p.type).filter(Boolean))];
+
+const diameterParam = Astro.url.searchParams.get('diameter') ?? '';
+const typeParam = Astro.url.searchParams.get('type') ?? '';
+const diameter = diameterParam ? Number(diameterParam) : null;
+const diameterValid = diameter !== null && Number.isFinite(diameter) && diameter > 0;
+
+const filtered = products.filter((p) => {
+  if (
+    diameterValid &&
+    !(p.pot_diameter_min != null && p.pot_diameter_max != null && diameter! >= p.pot_diameter_min && diameter! <= p.pot_diameter_max)
+  ) {
+    return false;
+  }
+  if (typeParam && p.type !== typeParam) {
+    return false;
+  }
+  return true;
+});
+
+const filterActive = diameterValid || Boolean(typeParam);
 
 const description = 'Кашпо из массива дерева: напольные, настольные, подвесные. Любой размер и сложность — на заказ.';
 ---
@@ -14,9 +37,50 @@ const description = 'Кашпо из массива дерева: напольн
       закажите под свой горшок.
     </p>
 
+    <form class="filter" method="get" action="/catalog">
+      <label class="filter__label">
+        <span class="filter__label-text">Диаметр горшка, см</span>
+        <input
+          class="filter__input"
+          type="number"
+          name="diameter"
+          min="1"
+          step="1"
+          value={diameterValid ? diameter : ''}
+          placeholder="Например, 25"
+        />
+      </label>
+
+      <label class="filter__label">
+        <span class="filter__label-text">Тип</span>
+        <select class="filter__input" name="type">
+          <option value="">Любой</option>
+          {types.map((t) => (
+            <option value={t} selected={t === typeParam}>
+              {t}
+            </option>
+          ))}
+        </select>
+      </label>
+
+      <button class="filter__submit" type="submit">Подобрать</button>
+      {filterActive && (
+        <a class="filter__reset" href="/catalog">
+          Сбросить
+        </a>
+      )}
+    </form>
+
+    {filterActive && filtered.length === 0 && (
+      <p class="filter__empty">
+        Под такие параметры готовых работ нет — но мы делаем на заказ любого
+        размера. <a href="/custom">Оставьте заявку</a>.
+      </p>
+    )}
+
     <ul class="grid">
       {
-        products.map((p) => {
+        filtered.map((p) => {
           const mainPhoto = p.photos?.[0]
             ? fileUrl('products', p.id, p.photos[0], Astro.url.origin)
             : null;
@@ -26,7 +90,10 @@ const description = 'Кашпо из массива дерева: напольн
                 {mainPhoto ? (
                   <img class="card__img" src={mainPhoto} alt={p.title} loading="lazy" />
                 ) : (
-                  <div class="card__img card__img--placeholder">Фото скоро</div>
+                  <div class="card__img card__img--placeholder">
+                    <PhotoPlaceholder />
+                    <span>Фото скоро</span>
+                  </div>
                 )}
                 <div class="card__body">
                   <h2 class="card__title">{p.title}</h2>
@@ -56,6 +123,73 @@ const description = 'Кашпо из массива дерева: напольн
     color: var(--text-muted);
     font-size: var(--text-lg);
     max-width: 38em;
+  }
+
+  .filter {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+    margin: 0 0 2rem;
+    padding: 1.25rem;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+
+  .filter__label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+    flex: 1;
+  }
+
+  .filter__label-text {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--text-muted);
+  }
+
+  .filter__input {
+    font: inherit;
+    color: var(--text);
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    width: 100%;
+  }
+
+  .filter__submit {
+    padding: 0.875rem 1.5rem;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 999px;
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .filter__submit:hover {
+    background: var(--accent-strong);
+  }
+
+  .filter__reset {
+    align-self: center;
+    font-size: var(--text-sm);
+  }
+
+  .filter__empty {
+    margin: 0 0 2rem;
+    color: var(--text-muted);
+  }
+
+  @media (min-width: 640px) {
+    .filter {
+      flex-direction: row;
+      align-items: flex-end;
+    }
   }
 
   .grid {
@@ -96,8 +230,11 @@ const description = 'Кашпо из массива дерева: напольн
   }
 
   .card__img--placeholder {
-    display: grid;
-    place-items: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
     background: var(--bg);
     color: var(--text-muted);
     font-size: var(--text-sm);

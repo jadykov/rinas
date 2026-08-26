@@ -1,11 +1,19 @@
 ---
-import { getProducts, fileUrl } from '../lib/pb';
+import { getProducts, getReviews, getPageBySlug, fileUrl } from '../lib/pb';
 import Base from '../layouts/Base.astro';
 import LeadForm from '../components/LeadForm.astro';
+import PhotoPlaceholder from '../components/PhotoPlaceholder.astro';
 
 const products = await getProducts();
 const featured = products.filter((p) => p.is_featured).slice(0, 3);
 const fallback = featured.length ? featured : products.slice(0, 3);
+
+const workshopPage = await getPageBySlug('workshop');
+const workshopPhotos = (workshopPage?.photos ?? []).map((f) =>
+  fileUrl('pages', workshopPage!.id, f, Astro.url.origin),
+);
+
+const reviews = await getReviews();
 
 const description =
   'Кашпо из массива дерева на заказ: любой размер, любая сложность. Напольные, настольные и подвесные — под ваш горшок.';
@@ -28,7 +36,7 @@ const description =
     <h2 class="section__title">Лучшие работы</h2>
     <ul class="grid">
       {
-        featured.map((p) => {
+        fallback.map((p) => {
           const mainPhoto = p.photos?.[0]
             ? fileUrl('products', p.id, p.photos[0], Astro.url.origin)
             : null;
@@ -38,7 +46,10 @@ const description =
                 {mainPhoto ? (
                   <img class="card__img" src={mainPhoto} alt={p.title} loading="lazy" />
                 ) : (
-                  <div class="card__img card__img--placeholder">Фото скоро</div>
+                  <div class="card__img card__img--placeholder">
+                    <PhotoPlaceholder />
+                    <span>Фото скоро</span>
+                  </div>
                 )}
                 <div class="card__body">
                   <h3 class="card__title">{p.title}</h3>
@@ -64,6 +75,39 @@ const description =
     </div>
   </section>
 
+  {workshopPhotos.length > 0 && (
+    <section class="workshop container">
+      <h2 class="section__title">Мастерская</h2>
+      <ul class="workshop__grid">
+        {workshopPhotos.map((src) => (
+          <li>
+            <img class="workshop__img" src={src} alt="Мастерская" loading="lazy" />
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
+
+  {reviews.length > 0 && (
+    <section class="reviews container">
+      <h2 class="section__title">Отзывы</h2>
+      <ul class="reviews__grid">
+        {reviews.map((r) => (
+          <li class="review">
+            {r.rating && (
+              <p class="review__rating" aria-label={`Оценка ${r.rating} из 5`}>
+                {'★'.repeat(r.rating)}
+                {'☆'.repeat(Math.max(0, 5 - r.rating))}
+              </p>
+            )}
+            <p class="review__text">{r.text}</p>
+            <p class="review__author">{r.author}</p>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
+
   <section class="lead container">
     <LeadForm
       title="Оставьте заявку — обсудим ваш заказ"
@@ -75,7 +119,7 @@ const description =
 
 <style>
   .hero {
-    padding: 4rem 0 3rem;
+    padding: 2.5rem 0 2rem;
     background:
       radial-gradient(circle at top right, rgba(154, 107, 63, 0.12), transparent 60%),
       var(--bg);
@@ -83,7 +127,7 @@ const description =
 
   .hero__title {
     font-size: var(--text-3xl);
-    margin: 0 0 1rem;
+    margin: 0 0 0.75rem;
     max-width: 14em;
   }
 
@@ -91,12 +135,13 @@ const description =
     font-size: var(--text-lg);
     color: var(--text-muted);
     max-width: 32em;
-    margin: 0 0 2rem;
+    margin: 0 0 1.5rem;
   }
 
   .hero__actions {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    flex-wrap: wrap;
     gap: 0.75rem;
   }
 
@@ -170,8 +215,11 @@ const description =
   }
 
   .card__img--placeholder {
-    display: grid;
-    place-items: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
     background: var(--bg);
     color: var(--text-muted);
     font-size: var(--text-sm);
@@ -194,6 +242,63 @@ const description =
 
   .steps {
     padding: 2rem 0 3rem;
+  }
+
+  .workshop {
+    padding: 1rem 0 3rem;
+  }
+
+  .workshop__grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .workshop__img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-radius: var(--radius);
+  }
+
+  .reviews {
+    padding: 1rem 0 3rem;
+  }
+
+  .reviews__grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .review {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 1.25rem;
+  }
+
+  .review__rating {
+    margin: 0 0 0.5rem;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+  }
+
+  .review__text {
+    margin: 0 0 0.75rem;
+    color: var(--text-muted);
+  }
+
+  .review__author {
+    margin: 0;
+    font-weight: 600;
   }
 
   .lead {
@@ -237,8 +342,16 @@ const description =
       grid-template-columns: repeat(2, 1fr);
     }
 
-    .hero__actions {
-      flex-direction: row;
+    .hero {
+      padding: 4rem 0 3rem;
+    }
+
+    .workshop__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .reviews__grid {
+      grid-template-columns: repeat(2, 1fr);
     }
   }
 
@@ -249,6 +362,14 @@ const description =
 
     .steps__list {
       grid-template-columns: repeat(4, 1fr);
+    }
+
+    .workshop__grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .reviews__grid {
+      grid-template-columns: repeat(3, 1fr);
     }
   }
 </style>
