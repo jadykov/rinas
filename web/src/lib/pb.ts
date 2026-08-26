@@ -22,6 +22,8 @@ export interface Product {
   id: string;
   collectionId: string;
   collectionName: string;
+  created: string;
+  updated: string;
   title: string;
   slug: string;
   description: string;
@@ -56,12 +58,24 @@ export async function getProducts(): Promise<Product[]> {
   return data.items ?? [];
 }
 
-/** Возвращает товар по slug, или null, если такого товара нет. */
+/** Экранирует спецсимволы для строкового литерала в фильтре PocketBase. */
+function escapeFilterValue(value: string): string {
+  return value.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+}
+
+/** Возвращает товар по slug, или null, если такого товара нет (в т.ч. при некорректном slug). */
 export async function getProductBySlug(slug: string): Promise<Product | null> {
+  const filter = `(slug="${escapeFilterValue(slug)}")`;
   const res = await fetch(
-    `${PB_URL}/api/collections/products/records?filter=${encodeURIComponent(`(slug="${slug}")`)}`,
+    `${PB_URL}/api/collections/products/records?filter=${encodeURIComponent(filter)}`,
     { headers: { Accept: 'application/json' } },
   );
+
+  // Некорректный фильтр (например, недопустимые символы в slug) — считаем,
+  // что товар не найден, а не падаем 500-й ошибкой.
+  if (res.status === 400) {
+    return null;
+  }
 
   if (!res.ok) {
     throw new Error(`Ошибка PocketBase: ${res.status} ${res.statusText}`);
