@@ -1,0 +1,63 @@
+---
+import Base from '../layouts/Base.astro';
+import LeadForm from '../components/LeadForm.astro';
+---
+<Base title="О нас" description="Мастерская кашпо из массива дерева. Работаем вдвоём, вручную, делаем на заказ любой сложности.">
+  <section class="page container">
+    <div class="about">
+      <div>
+        <h1 class="page__title">О мастерской</h1>
+        <p>
+          Мы делаем кашпо из массива дерева — вдвоём, вручную, в небольшой
+          мастерской. Не конвейер и не серийное производство: каждая работа
+          собирается под конкретный горшок и интерьер.
+        </p>
+        <p>
+          Берёмся за заказы любой сложности: от аккуратного настольного кашпо до
+          нестандартных форм по вашим чертежам или фотографиям. Любим дерево,
+          работаем с дубом, ясенем, орехом и сосной, подбираем породу и обработку
+          под ваш интерьер.
+        </p>
+        <p>
+          Показываем готовое изделие до отправки. Если что-то не устроит —
+          доработаем.
+        </p>
+      </div>
+
+      <LeadForm
+        title="Задайте вопрос или оставьте заявку"
+        source="about"
+        submitText="Отправить"
+      />
+    </div>
+  </section>
+</Base>
+
+<style>
+  .page {
+    padding-top: 2.5rem;
+    padding-bottom: 3rem;
+  }
+
+  .page__title {
+    margin: 0 0 1rem;
+  }
+
+  .about {
+    display: grid;
+    gap: 2rem;
+    align-items: start;
+  }
+
+  .about p {
+    color: var(--text-muted);
+    margin: 0 0 1rem;
+    max-width: 38em;
+  }
+
+  @media (min-width: 900px) {
+    .about {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+</style>

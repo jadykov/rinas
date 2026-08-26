@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import { TELEGRAM_LINK } from '../lib/site';
 
 interface Props {
   title: string;
@@ -42,6 +43,11 @@ const fullTitle = title ? `${title} — Мастерская кашпо` : 'Ма
         <nav class="footer__links" aria-label="Служебные страницы">
           <a href="/info">Доставка и оплата</a>
           <a href="/privacy">Политика конфиденциальности</a>
+          {TELEGRAM_LINK && (
+            <a href={TELEGRAM_LINK} target="_blank" rel="noopener">
+              Написать в Telegram
+            </a>
+          )}
         </nav>
       </div>
     </footer>

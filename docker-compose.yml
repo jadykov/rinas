@@ -19,6 +19,9 @@ services:
     working_dir: /app
     environment:
       - HOST=0.0.0.0
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - TELEGRAM_CHAT_ID=${TELEGRAM_CHAT_ID}
+      - TELEGRAM_USERNAME=${TELEGRAM_USERNAME}
     volumes:
       - ./web:/app
     command: ["node", "dist/server/entry.mjs"]

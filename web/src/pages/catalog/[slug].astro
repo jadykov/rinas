@@ -1,6 +1,7 @@
 ---
 import { getProductBySlug, fileUrl } from '../../lib/pb';
 import Base from '../../layouts/Base.astro';
+import LeadForm from '../../components/LeadForm.astro';
 
 const { slug } = Astro.params;
 
@@ -97,6 +98,16 @@ const mainPhoto = photos[0] ?? null;
 
         <a class="btn" href="/custom">Заказать похожее</a>
       </div>
+    </div>
+
+    <div class="card-lead">
+      <LeadForm
+        title="Хотите такое же — оставьте заявку"
+        productId={product.id}
+        productName={product.title}
+        source={`product:${product.slug}`}
+        submitText="Заказать"
+      />
     </div>
   </article>
 </Base>
@@ -200,7 +211,20 @@ const mainPhoto = photos[0] ?? null;
     text-decoration: none;
   }
 
+  .card-lead {
+    margin-top: 2rem;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 1.5rem var(--gutter);
+  }
+
   @media (min-width: 768px) {
+    .card-lead {
+      padding: 2rem;
+    }
+  }
     .card {
       display: grid;
       grid-template-columns: 1fr 1fr;

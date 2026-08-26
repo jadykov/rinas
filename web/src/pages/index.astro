@@ -1,6 +1,7 @@
 ---
 import { getProducts, fileUrl } from '../lib/pb';
 import Base from '../layouts/Base.astro';
+import LeadForm from '../components/LeadForm.astro';
 
 const products = await getProducts();
 const featured = products.filter((p) => p.is_featured).slice(0, 3);
@@ -61,6 +62,14 @@ const description =
         <li>Получите кашпо — перевод или лично</li>
       </ol>
     </div>
+  </section>
+
+  <section class="lead container">
+    <LeadForm
+      title="Оставьте заявку — обсудим ваш заказ"
+      source="home"
+      submitText="Отправить заявку"
+    />
   </section>
 </Base>
 
@@ -185,6 +194,10 @@ const description =
 
   .steps {
     padding: 2rem 0 3rem;
+  }
+
+  .lead {
+    padding: 1rem 0 3rem;
   }
 
   .steps__list {

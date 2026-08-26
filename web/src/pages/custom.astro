@@ -1,0 +1,120 @@
+---
+import Base from '../layouts/Base.astro';
+import LeadForm from '../components/LeadForm.astro';
+import { TELEGRAM_LINK } from '../lib/site';
+
+const description =
+  'Кашпо на заказ по вашим размерам и чертежам: любой размер, любая сложность, из массива дерева. Сделаем точно под ваш горшок и интерьер.';
+---
+<Base title="Кашпо на заказ" description={description}>
+  <section class="page container">
+    <div class="custom">
+      <div class="custom__text">
+        <h1 class="custom__title">Кашпо на заказ по вашим размерам</h1>
+        <p class="custom__lead">
+          Не нашли готовый размер? Сделаем под ваш горшок и интерьер. Любая форма,
+          любая сложность — от простого напольного кашпо до нестандартного по вашим
+          чертежам или фото.
+        </p>
+        <ul class="custom__list">
+          <li>Работаем вдвоём, вручную — каждая вещь уникальна</li>
+          <li>Подберём породу дерева и обработку под ваш интерьер</li>
+          <li>Покажем готовое кашпо до отправки</li>
+          <li>Оплата переводом или лично при получении</li>
+        </ul>
+        {TELEGRAM_LINK && (
+          <a class="custom__tg" href={TELEGRAM_LINK} target="_blank" rel="noopener">
+            Написать в Telegram
+          </a>
+        )}
+      </div>
+
+      <div class="custom__form">
+        <LeadForm
+          title="Оставьте заявку"
+          source="custom"
+          submitText="Отправить заявку"
+        />
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .page {
+    padding-top: 2.5rem;
+    padding-bottom: 3rem;
+  }
+
+  .custom {
+    display: grid;
+    gap: 2rem;
+  }
+
+  .custom__title {
+    margin: 0 0 1rem;
+  }
+
+  .custom__lead {
+    margin: 0 0 1.5rem;
+    color: var(--text-muted);
+    font-size: var(--text-lg);
+    max-width: 38em;
+  }
+
+  .custom__list {
+    margin: 0 0 1.5rem;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .custom__list li {
+    padding-left: 1.5rem;
+    position: relative;
+  }
+
+  .custom__list li::before {
+    content: '—';
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  .custom__tg {
+    display: inline-block;
+    padding: 0.875rem 1.5rem;
+    border: 1px solid var(--accent);
+    color: var(--accent-strong);
+    border-radius: 999px;
+    font-weight: 600;
+  }
+
+  .custom__tg:hover {
+    background: var(--bg-elevated);
+    text-decoration: none;
+  }
+
+  .custom__form {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 1.5rem var(--gutter);
+  }
+
+  @media (min-width: 900px) {
+    .custom {
+      grid-template-columns: 1fr 1fr;
+      align-items: start;
+    }
+
+    .custom__form {
+      position: sticky;
+      top: 1rem;
+      padding: 2rem;
+    }
+  }
+</style>
