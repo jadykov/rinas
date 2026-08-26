@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import Metrics from '../components/Metrics.astro';
 import { TELEGRAM_LINK } from '../lib/site';
 
 interface Props {
@@ -26,6 +27,7 @@ const canonical = `${Astro.url.origin}${Astro.url.pathname}`;
     {description && <meta property="og:description" content={description} />}
     <meta property="og:url" content={canonical} />
     {image && <meta property="og:image" content={image} />}
+    <Metrics />
   </head>
   <body>
     <header class="header">
@@ -51,7 +53,7 @@ const canonical = `${Astro.url.origin}${Astro.url.pathname}`;
           <a href="/info">Доставка и оплата</a>
           <a href="/privacy">Политика конфиденциальности</a>
           {TELEGRAM_LINK && (
-            <a href={TELEGRAM_LINK} target="_blank" rel="noopener">
+            <a href={TELEGRAM_LINK} target="_blank" rel="noopener" data-metric="telegram_click">
               Написать в Telegram
             </a>
           )}

@@ -1,6 +1,6 @@
 # Статус разработки сайта кашпо
 
-Последнее обновление: Фаза 8 завершена.
+Последнее обновление: Фаза 9 завершена (что не зависит от владельца).
 
 ## Правила работы
 
@@ -72,7 +72,12 @@
   - URL модели передаётся через `data-src` на элементе (Astro не интерполирует `{var}` в `<script>`, см. ниже).
   - Исправлен баг Фазы 6: `{submitText}` в inline-скрипте формы оставался литералом (Astro не подставляет props в `<script>`). Теперь кнопка возвращает исходный текст через захват `originalText`, без подстановки в JS.
   - Проверено на тестовом `.glb` (куб): вьюер появляется, `data-src` = реальный URL модели, у товара без модели вьюера нет. Тестовая модель из базы удалена (реальные — чеклист владельца).
-- [ ] **Фаза 9 — Финал** ← СЛЕДУЮЩАЯ
+- [x] **Фаза 9 — Финал** (агентская часть; остальное — владелец/деплой)
+  - Яндекс.Метрика: компонент `web/src/components/Metrics.astro` (счётчик + цели). Подключается только если задан `YANDEX_METRIKA_ID` (env). Цели: `form_send` (успешная отправка формы — событие `lead-sent` из LeadForm), `telegram_click` (клик по ссылке с `data-metric="telegram_click"` в подвале и на `/custom`).
+  - Проверено: при пустом `YANDEX_METRIKA_ID` код Метрики на страницах отсутствует; при заданном ID — счётчик, `init` и обе цели подключаются. Реальный номер счётчика — от владельца.
+  - Скрипт бэкапа `pb_data`: `scripts/backup-pb.sh` (потоковый tar из контейнера на хост, каталог `backups/`, gitignored, хранение последних N=14). Проверено: архив создаётся корректно. Cron-строка — в шапке скрипта.
+  - Lighthouse (мобильный, Performance): `/` 100, `/catalog` 100, `/catalog/[slug]` 100, `/custom` 100 (цель ≥ 90 достигнута; прогон без реальных фото — на проде LCP перепроверить).
+  - Осталось у владельца/на деплое (из PLAN.md): номер Метрики → `.env`; Яндекс.Вебмастер + отправка sitemap (на VPS с реальным доменом); реальные фото и 3D-модели.
 
 ---
 
@@ -88,7 +93,7 @@
   - установка: `docker run --rm -v "$PWD/web:/app" -w /app node:24-alpine sh -c "npm install"`
   - сборка: `docker run --rm -v "$PWD/web:/app" -w /app node:24-alpine sh -c "npm run build"`
   - после сборки перезапустить контейнер: `docker compose restart web`
-- `web/src/pages/` — страницы Astro: `index.astro` (главная), `catalog.astro`, `catalog/[slug].astro` (+ 3D-вьюер), `custom.astro`, `info.astro`, `about.astro`, `privacy.astro`, `404.astro`, `api/lead.ts` (POST-приём заявок), `sitemap.xml.ts`, `robots.txt.ts` (SSR). `web/src/components/LeadForm.astro` — форма заявки. `web/src/layouts/Base.astro` — шапка+подвал + canonical/OG. `web/src/styles/global.css` — CSS-переменные. `web/src/lib/pb.ts` — клиент PocketBase. `web/src/lib/site.ts` — константы сайта (Telegram-ссылка).
+- `web/src/pages/` — страницы Astro: `index.astro` (главная), `catalog.astro`, `catalog/[slug].astro` (+ 3D-вьюер), `custom.astro`, `info.astro`, `about.astro`, `privacy.astro`, `404.astro`, `api/lead.ts` (POST-приём заявок), `sitemap.xml.ts`, `robots.txt.ts` (SSR). `web/src/components/LeadForm.astro` — форма заявки, `web/src/components/Metrics.astro` — Яндекс.Метрика + цели. `web/src/layouts/Base.astro` — шапка+подвал + canonical/OG. `web/src/styles/global.css` — CSS-переменные. `web/src/lib/pb.ts` — клиент PocketBase. `web/src/lib/site.ts` — константы сайта (Telegram-ссылка, Метрика). `scripts/backup-pb.sh` — бэкап `pb_data` по cron.
 
 ### Текущее состояние (что уже работает)
 
@@ -97,16 +102,16 @@
 - Дизайн: mobile-first, CSS-переменные, акцентный цвет `#9a6b3f`.
 - Формы: компонент `web/src/components/LeadForm.astro` (на `/`, `/custom`, `/about`, в карточке), эндпоинт `web/src/pages/api/lead.ts` (валидация + honeypot + запись в `leads` + Telegram). Проверено POST-ом вручную.
 - Telegram: токен/чат через env (`TELEGRAM_*` из `.env`, gitignored, проброшены в docker-compose). `.env` сейчас пустой — заполнить бот у `@BotFather` (чеклист владельца).
+- Метрика: `web/src/components/Metrics.astro` — счётчик + цели (отправка формы, клик по Telegram), подключается при заполненном `YANDEX_METRIKA_ID`.
 - SEO: `sitemap.xml`, `robots.txt` (SSR-эндпоинты), canonical + Open Graph в `Base.astro`, JSON-LD `Product` в карточке, H1 с диаметром горшка, SEO-тексты `/custom`.
 - 3D: `@google/model-viewer` 4.3.1 в карточке, грузится по клику «Смотреть в 3D» (динамический import), до клика — превью. Вьюер только при наличии `model_3d`.
+- Бэкап: `scripts/backup-pb.sh` (tar из контейнера в `backups/`, cron в шапке скрипта).
 
-### Следующая фаза 9 — Финал (из docs/PLAN.md)
+### Фаза 9 — Финал: что осталось у владельца / на деплое
 
-- Яндекс.Метрика + цели: отправка формы, клик по кнопке Telegram
-- Яндекс.Вебмастер, отправить sitemap
-- Прогон Lighthouse: цель Performance ≥ 90 на мобильном
-- Скрипт бэкапа `pb_data` по cron
-- (Часть — задачи владельца/деплой на VPS: домен, Метрика-счётчик, реальные модели/фото)
+- Заполнить номер Яндекс.Метрики в `.env` (`YANDEX_METRIKA_ID`) — код счётчика и цели уже готовы и подключаются автоматически.
+- Яндекс.Вебмастер: подтвердить сайт и отправить sitemap (на VPS с реальным доменом).
+- Перепроверить Lighthouse после загрузки реальных фото/3D-моделей (без них сейчас 100).
 
 ### Важно про `<script>` в Astro
 
@@ -114,14 +119,12 @@ Astro **не подставляет** `{переменная}` / props из fron
 
 ### Чего НЕТ (не делать): корзина/оплата, личный кабинет, Telegram-бот-каталог, ИИ-чат, реклама, мультиязычность, тёмная тема, Next/React/Vue/Tailwind.
 
-### Порядок на Фазу 9
+### Настроить бэкап по cron
 
-1. Прочитать `docs/PLAN.md` (раздел 4, Фаза 9).
-2. Проверить, что инфраструктура поднята: `docker compose up -d`.
-3. Счётчик Яндекс.Метрики (вставить код) + цели (отправка формы, клик по Telegram) — данные счётчика нужны от владельца.
-4. Проверить Lighthouse Performance ≥ 90 на мобильном (в песочнице — локально, реальные фото/модели ещё нет).
-5. Скрипт бэкапа `pb_data` по cron (в контейнере или на хосте).
-6. Собрать внутри Docker, перезапустить `web`, проверить глазами, затем `docs/STATUS.md` + коммит + push.
+Добавить строку в crontab хоста (пути поправить под деплой):
+```
+5 3 * * * cd /rinas && /rinas/scripts/backup-pb.sh >> /rinas/backups/backup.log 2>&1
+```
 
 ## Как продолжить работу
 
@@ -147,4 +150,5 @@ PUBLIC_PB_URL=
 TELEGRAM_BOT_TOKEN=
 TELEGRAM_CHAT_ID=
 TELEGRAM_USERNAME=
+YANDEX_METRIKA_ID=
 ```

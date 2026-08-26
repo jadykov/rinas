@@ -1,0 +1,60 @@
+---
+/**
+ * Яндекс.Метрика: счётчик + цели.
+ * Подключается только если задан YANDEX_METRIKA_ID (SSR-переменная из окружения).
+ * Цели:
+ *  - form_send — успешная отправка формы заявки (событие `lead-sent` из LeadForm);
+ *  - telegram_click — клик по ссылке с атрибутом data-metric="telegram_click".
+ */
+import { YANDEX_METRIKA_ID } from '../lib/site';
+
+const metrikaId = YANDEX_METRIKA_ID;
+---
+{
+  metrikaId && (
+    <>
+      <script is:inline define:vars={{ metrikaId }}>
+        (function (m, e, t, r, i, k, a) {
+          m[i] =
+            m[i] ||
+            function () {
+              (m[i].a = m[i].a || []).push(arguments);
+            };
+          m[i].l = 1 * new Date();
+          (k = e.createElement(t)),
+            (a = e.getElementsByTagName(t)[0]),
+            (k.async = 1),
+            (k.src = r),
+            a.parentNode.insertBefore(k, a);
+        })(window, document, 'script', 'https://mc.yandex.ru/metrika/tag.js', 'ym');
+
+        ym(metrikaId, 'init', {
+          clickmap: true,
+          trackLinks: true,
+          accurateTrackBounce: true,
+          webvisor: true,
+        });
+
+        // Цель: успешная отправка формы заявки.
+        window.addEventListener('lead-sent', function () {
+          ym(metrikaId, 'reachGoal', 'form_send');
+        });
+
+        // Цель: клик по кнопке «Написать в Telegram».
+        document.addEventListener('click', function (e) {
+          var target = e.target && e.target.closest ? e.target.closest('[data-metric="telegram_click"]') : null;
+          if (target) ym(metrikaId, 'reachGoal', 'telegram_click');
+        });
+      </script>
+      <noscript>
+        <div>
+          <img
+            src={`https://mc.yandex.ru/watch/${metrikaId}`}
+            style="position: absolute; left: -9999px;"
+            alt=""
+          />
+        </div>
+      </noscript>
+    </>
+  )
+}

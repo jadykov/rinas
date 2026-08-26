@@ -5,6 +5,9 @@
 # Данные PocketBase
 pb_data/
 
+# Бэкапы
+backups/
+
 # Зависимости и сборка
 node_modules/
 dist/

@@ -94,6 +94,7 @@ const formId = `lead-form-${Math.random().toString(36).slice(2, 8)}`;
         if (res.ok && data.ok) {
           status.textContent = 'Заявка отправлена, свяжемся в течение дня. Спасибо!';
           form.reset();
+          window.dispatchEvent(new CustomEvent('lead-sent'));
         } else {
           status.textContent = data.error || 'Не удалось отправить. Попробуйте ещё раз.';
           status.classList.add('lead-form__status--error');
