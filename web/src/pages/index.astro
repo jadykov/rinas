@@ -128,14 +128,14 @@ const description =
 <style>
   .hero {
     padding: 2.5rem 0 2rem;
-    /* Тёплый радиальный свет справа-сверху уравновешен едва заметным
-       комплементарным зелёным (тот же шалфей, что в листьях логотипа) —
-       приём как в живописи: тёплый свет + прохладная тень выглядят живее
-       плоского однотонного градиента. */
+    /* Сдержанно: без читаемого «блока»-заливки — только едва уловимый
+       рассеянный свет. Тёплый акцент справа-сверху уравновешен тем же
+       шалфейным зелёным, что в листьях логотипа, но на грани видимости —
+       вес несёт типографика и отступы, а не цветовая плашка. */
     background:
-      radial-gradient(circle at top right, rgba(154, 107, 63, 0.2), transparent 60%),
-      radial-gradient(circle at bottom left, rgba(122, 140, 95, 0.1), transparent 55%),
-      linear-gradient(180deg, #f2e6cf 0%, var(--bg) 100%);
+      radial-gradient(circle at top right, rgba(154, 107, 63, 0.1), transparent 65%),
+      radial-gradient(circle at bottom left, rgba(122, 140, 95, 0.05), transparent 60%),
+      var(--bg);
   }
 
   .hero__title {
