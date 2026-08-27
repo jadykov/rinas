@@ -82,10 +82,11 @@ const canonical = `${SITE_URL || Astro.url.origin}${Astro.url.pathname}`;
 
 <style>
   .header {
-    background: var(--bg-elevated);
-    /* Мягкая тень с холодным подтоном вместо жёсткой линии — переход к hero
-       ощущается как естественный перепад света, а не стык двух блоков. */
-    box-shadow: 0 6px 18px -14px rgba(74, 92, 68, 0.35);
+    /* Не отдельная цветная плашка — тот же фон, что у страницы,
+       граница только тонкой линией. Так шапка не «спорит» с hero,
+       который теперь тоже почти не выделен тоном. */
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
   }
 
   .header__inner {
