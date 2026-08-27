@@ -125,7 +125,7 @@ const canonical = `${SITE_URL || Astro.url.origin}${Astro.url.pathname}`;
     flex-wrap: wrap;
     align-items: center;
     gap: 0.25rem 0.875rem;
-    font-size: 0.9375rem;
+    font-size: 0.875rem;
   }
 
   .nav a {
@@ -137,11 +137,11 @@ const canonical = `${SITE_URL || Astro.url.origin}${Astro.url.pathname}`;
     padding-bottom: 0.3rem;
   }
 
-  /* Уголок-намёк на рамку у обычных ссылок (не у пилюли «На заказ») —
-     без цветной панели плоский текст меню нуждался хоть в каком-то
+  /* Уголок-намёк на рамку у пунктов меню, включая «На заказ» — без
+     цветной панели плоский текст меню нуждался хоть в каком-то
      графическом якоре. В покое едва заметен, при наведении «дорисовывается»
      в полную линию снизу, как будто вокруг пункта начинает формироваться рамка. */
-  .nav a:not(.nav__cta)::before {
+  .nav a::before {
     content: '';
     position: absolute;
     left: 0;
@@ -154,7 +154,7 @@ const canonical = `${SITE_URL || Astro.url.origin}${Astro.url.pathname}`;
     transition: opacity 0.2s ease, width 0.2s ease;
   }
 
-  .nav a:not(.nav__cta):hover::before {
+  .nav a:hover::before {
     opacity: 1;
     width: 100%;
   }
@@ -164,18 +164,12 @@ const canonical = `${SITE_URL || Astro.url.origin}${Astro.url.pathname}`;
     text-decoration: none;
   }
 
+  /* «На заказ» — та же текстовая ссылка, что и остальные пункты, просто
+     акцентным цветом и чуть жирнее, без заливки-пилюли (раньше слишком
+     выделялась на фоне остального меню). */
   .nav a.nav__cta {
-    padding: 0.3rem 0.875rem;
-    font-size: 0.875rem;
-    font-weight: 600;
-    background: var(--accent);
-    color: #fff;
-    border-radius: 999px;
-  }
-
-  .nav a.nav__cta:hover {
-    background: var(--accent-strong);
-    color: #fff;
+    color: var(--accent-strong);
+    font-weight: 700;
   }
 
   .footer {
