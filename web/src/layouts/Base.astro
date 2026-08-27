@@ -160,11 +160,19 @@ const canonical = `${SITE_URL || Astro.url.origin}${Astro.url.pathname}`;
   /* Мягкий тонированный фон вместо сплошной пилюли — даёт форму и вес,
      но остаётся тихим, без чёткой границы. */
   .nav a.nav__cta {
-    padding: 0.3rem 0.7rem;
+    padding: 0.25rem 0.55rem;
     border-radius: 8px;
     background: rgba(154, 107, 63, 0.12);
     color: var(--accent-strong);
     font-weight: 700;
+  }
+
+  .nav a.nav__cta::before {
+    content: '';
+    width: 3px;
+    height: 3px;
+    background: var(--accent-strong);
+    flex-shrink: 0;
   }
 
   .nav a.nav__cta:hover {
