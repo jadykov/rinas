@@ -163,7 +163,7 @@ const canonical = `${SITE_URL || Astro.url.origin}${Astro.url.pathname}`;
 
   @media (min-width: 768px) {
     .logo {
-      font-size: var(--text-xl);
+      font-size: 1.375rem;
     }
   }
 
@@ -177,14 +177,31 @@ const canonical = `${SITE_URL || Astro.url.origin}${Astro.url.pathname}`;
     margin-left: auto;
   }
 
-  /* На узких экранах меню переносится под логотип на отдельную строку —
-     растягиваем на всю ширину и распределяем пункты равномерно, а не
-     прижимаем к одному краю. */
+  @media (min-width: 768px) {
+    .nav {
+      font-size: 0.8125rem;
+    }
+  }
+
+  /* На узких экранах логотип упразднён (см. .nav__home) — вся навигация
+     в одну строку, поэтому спейсинг плотнее, чтобы все пункты уместились
+     без переноса. */
   @media (max-width: 767px) {
     .nav {
       width: 100%;
       justify-content: space-between;
+      gap: 0.2rem 0.25rem;
+      font-size: 0.6875rem;
       margin-left: 0;
+    }
+
+    .nav a {
+      gap: 0.2rem;
+    }
+
+    .nav__home-icon {
+      width: 0.7rem;
+      height: 0.7rem;
     }
   }
 
@@ -225,6 +242,18 @@ const canonical = `${SITE_URL || Astro.url.origin}${Astro.url.pathname}`;
     background: rgba(154, 107, 63, 0.12);
     color: var(--accent-strong);
     font-weight: 700;
+    /* Зафиксирован отдельно от .nav — при уменьшении шрифта остальных
+       пунктов меню на десктопе «На заказ» не должна мельчать вместе с ними. */
+    font-size: 0.875rem;
+  }
+
+  /* На мобильных, наоборот, «На заказ» тоже уплотняется — иначе не
+     умещается в общую строку меню вместе с остальными пунктами. */
+  @media (max-width: 767px) {
+    .nav a.nav__cta {
+      font-size: 0.6875rem;
+      padding: 0.15rem 0.3rem;
+    }
   }
 
   .nav a.nav__cta::before {
