@@ -157,8 +157,12 @@ const canonical = `${SITE_URL || Astro.url.origin}${Astro.url.pathname}`;
      акцентным цветом и чуть жирнее, без заливки-пилюли (раньше слишком
      выделялась на фоне остального меню). */
   .nav a.nav__cta {
-    color: var(--accent-strong);
+    color: var(--accent);
     font-weight: 700;
+  }
+
+  .nav a.nav__cta:hover {
+    color: var(--accent-strong);
   }
 
   .footer {
