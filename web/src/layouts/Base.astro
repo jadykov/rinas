@@ -43,7 +43,8 @@ const canonical = `${SITE_URL || Astro.url.origin}${Astro.url.pathname}`;
               fill="#f0e7d8"
             />
           </svg>
-          Кашпо<span> из массива</span>
+          <span class="logo__full">Кашпо<span class="logo__accent"> из массива</span></span>
+          <span class="logo__short">Главная</span>
         </a>
         <nav class="nav" aria-label="Основная навигация">
           <a href="/catalog">Каталог</a>
@@ -110,8 +111,24 @@ const canonical = `${SITE_URL || Astro.url.origin}${Astro.url.pathname}`;
     color: var(--text);
   }
 
-  .logo span {
+  .logo__accent {
     color: var(--accent);
+  }
+
+  /* На узких экранах — короткое «Главная» вместо полного названия,
+     чтобы освободить место шапке и не давить на меню рядом. */
+  .logo__short {
+    display: none;
+  }
+
+  @media (max-width: 767px) {
+    .logo__full {
+      display: none;
+    }
+
+    .logo__short {
+      display: inline;
+    }
   }
 
   .logo__mark {
@@ -127,10 +144,18 @@ const canonical = `${SITE_URL || Astro.url.origin}${Astro.url.pathname}`;
     justify-content: flex-end;
     gap: 0.25rem 0.875rem;
     font-size: 0.875rem;
-    /* Прижато к правому краю — на мобильных, где меню переносится под
-       логотип на отдельную строку, иначе оно стартует от левого края
-       вплотную под названием сайта и случайно задевается пальцем. */
     margin-left: auto;
+  }
+
+  /* На узких экранах меню переносится под логотип на отдельную строку —
+     растягиваем на всю ширину и распределяем пункты равномерно, а не
+     прижимаем к одному краю. */
+  @media (max-width: 767px) {
+    .nav {
+      width: 100%;
+      justify-content: space-between;
+      margin-left: 0;
+    }
   }
 
   .nav a {
