@@ -124,8 +124,13 @@ const canonical = `${SITE_URL || Astro.url.origin}${Astro.url.pathname}`;
     display: flex;
     flex-wrap: wrap;
     align-items: center;
+    justify-content: flex-end;
     gap: 0.25rem 0.875rem;
     font-size: 0.875rem;
+    /* Прижато к правому краю — на мобильных, где меню переносится под
+       логотип на отдельную строку, иначе оно стартует от левого края
+       вплотную под названием сайта и случайно задевается пальцем. */
+    margin-left: auto;
   }
 
   .nav a {
