@@ -139,8 +139,9 @@ const canonical = `${SITE_URL || Astro.url.origin}${Astro.url.pathname}`;
   }
 
   /* Компактная чёрточка слева от каждого пункта меню — простой
-     графический якорь для плоского текста без цветной панели. */
-  .nav a::before {
+     графический якорь для плоского текста без цветной панели.
+     У «На заказ» свой акцент (тонированный фон), чёрточка не нужна. */
+  .nav a:not(.nav__cta)::before {
     content: '';
     width: 2px;
     height: 0.85em;
@@ -156,13 +157,18 @@ const canonical = `${SITE_URL || Astro.url.origin}${Astro.url.pathname}`;
   /* «На заказ» — та же текстовая ссылка, что и остальные пункты, просто
      акцентным цветом и чуть жирнее, без заливки-пилюли (раньше слишком
      выделялась на фоне остального меню). */
+  /* Мягкий тонированный фон вместо сплошной пилюли — даёт форму и вес,
+     но остаётся тихим, без чёткой границы. */
   .nav a.nav__cta {
-    color: var(--accent);
+    padding: 0.3rem 0.7rem;
+    border-radius: 8px;
+    background: rgba(154, 107, 63, 0.12);
+    color: var(--accent-strong);
     font-weight: 700;
   }
 
   .nav a.nav__cta:hover {
-    color: var(--accent-strong);
+    background: rgba(154, 107, 63, 0.2);
   }
 
   .footer {
