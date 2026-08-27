@@ -129,34 +129,23 @@ const canonical = `${SITE_URL || Astro.url.origin}${Astro.url.pathname}`;
   }
 
   .nav a {
-    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
     color: var(--text);
     font-weight: 500;
     /* Пункт меню не разрывается внутри себя на два слова */
     white-space: nowrap;
-    padding-bottom: 0.3rem;
   }
 
-  /* Уголок-намёк на рамку у пунктов меню, включая «На заказ» — без
-     цветной панели плоский текст меню нуждался хоть в каком-то
-     графическом якоре. В покое едва заметен, при наведении «дорисовывается»
-     в полную линию снизу, как будто вокруг пункта начинает формироваться рамка. */
+  /* Компактная чёрточка слева от каждого пункта меню — простой
+     графический якорь для плоского текста без цветной панели. */
   .nav a::before {
     content: '';
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    width: 0.55rem;
-    height: 0.55rem;
-    border-left: 1.5px solid var(--accent);
-    border-bottom: 1.5px solid var(--accent);
-    opacity: 0.4;
-    transition: opacity 0.2s ease, width 0.2s ease;
-  }
-
-  .nav a:hover::before {
-    opacity: 1;
-    width: 100%;
+    width: 2px;
+    height: 0.85em;
+    background: var(--accent);
+    flex-shrink: 0;
   }
 
   .nav a:hover {
