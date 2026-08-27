@@ -82,9 +82,8 @@ const canonical = `${SITE_URL || Astro.url.origin}${Astro.url.pathname}`;
 
 <style>
   .header {
-    background: #f1e8d8;
-    border-bottom: 1px solid #ddccae;
-    box-shadow: 0 2px 8px rgba(43, 38, 33, 0.06);
+    background: var(--bg-elevated);
+    border-bottom: 1px solid var(--border);
   }
 
   .header__inner {
