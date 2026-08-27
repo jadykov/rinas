@@ -13,6 +13,10 @@ interface Props {
 const { title, description, image } = Astro.props;
 const fullTitle = title ? `${title} — Мастерская кашпо` : 'Мастерская кашпо';
 const canonical = `${SITE_URL || Astro.url.origin}${Astro.url.pathname}`;
+
+const currentPath = Astro.url.pathname;
+const isActive = (href: string) =>
+  href === '/' ? currentPath === '/' : currentPath === href || currentPath.startsWith(`${href}/`);
 ---
 <!doctype html>
 <html lang="ru">
@@ -46,7 +50,7 @@ const canonical = `${SITE_URL || Astro.url.origin}${Astro.url.pathname}`;
           Кашпо<span class="logo__accent"> из массива</span>
         </a>
         <nav class="nav" aria-label="Основная навигация">
-          <a class="nav__home" href="/">
+          <a class="nav__home" href="/" aria-current={isActive('/') ? 'page' : undefined}>
             <svg class="nav__home-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
               <rect width="24" height="24" rx="6" fill="var(--accent)" />
               <path d="M12 13c0-4-2.5-6-2.5-6s0 4 2.5 6z" fill="#f0e7d8" />
@@ -58,10 +62,10 @@ const canonical = `${SITE_URL || Astro.url.origin}${Astro.url.pathname}`;
             </svg>
             Главная
           </a>
-          <a href="/catalog">Каталог</a>
-          <a href="/info">Доставка</a>
-          <a href="/about">О нас</a>
-          <a class="nav__cta" href="/custom">На заказ</a>
+          <a href="/catalog" aria-current={isActive('/catalog') ? 'page' : undefined}>Каталог</a>
+          <a href="/info" aria-current={isActive('/info') ? 'page' : undefined}>Доставка</a>
+          <a href="/about" aria-current={isActive('/about') ? 'page' : undefined}>О нас</a>
+          <a class="nav__cta" href="/custom" aria-current={isActive('/custom') ? 'page' : undefined}>На заказ</a>
         </nav>
       </div>
     </header>
@@ -217,15 +221,29 @@ const canonical = `${SITE_URL || Astro.url.origin}${Astro.url.pathname}`;
     display: inline-flex;
     align-items: center;
     gap: 0.4rem;
+    padding-bottom: 0.15rem;
     color: var(--text);
     font-weight: 500;
     /* Пункт меню не разрывается внутри себя на два слова */
     white-space: nowrap;
+    /* Тонкая линия-подчёркивание для активного пункта — прозрачная по
+       умолчанию, чтобы не «прыгал» размер при переключении. */
+    border-bottom: 1.5px solid transparent;
   }
 
   .nav a:hover {
     color: var(--accent-strong);
     text-decoration: none;
+  }
+
+  .nav a[aria-current='page'] {
+    color: var(--accent-strong);
+    border-bottom-color: var(--accent-strong);
+  }
+
+  .nav a.nav__cta[aria-current='page'] {
+    border-bottom-color: transparent;
+    background: rgba(154, 107, 63, 0.2);
   }
 
   /* «На заказ» — та же текстовая ссылка, что и остальные пункты, просто
