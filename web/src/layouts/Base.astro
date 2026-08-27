@@ -99,6 +99,10 @@ const canonical = `${SITE_URL || Astro.url.origin}${Astro.url.pathname}`;
        который теперь тоже почти не выделен тоном. */
     background: var(--bg);
     border-bottom: 1px solid var(--border);
+    /* Едет вместе со страницей — каталог и заказ всегда под рукой. */
+    position: sticky;
+    top: 0;
+    z-index: 20;
   }
 
   .header__inner {
@@ -175,6 +179,10 @@ const canonical = `${SITE_URL || Astro.url.origin}${Astro.url.pathname}`;
     gap: 0.25rem 0.875rem;
     font-size: 0.875rem;
     margin-left: auto;
+    /* Пункты меню строчными — спокойнее и современнее, чем Каждое Слово
+       С Заглавной. Названия в разметке остаются как есть (доступность,
+       читалки экрана произносят как написано). */
+    text-transform: lowercase;
   }
 
   @media (min-width: 768px) {
@@ -184,14 +192,14 @@ const canonical = `${SITE_URL || Astro.url.origin}${Astro.url.pathname}`;
   }
 
   /* На узких экранах логотип упразднён (см. .nav__home) — вся навигация
-     в одну строку, поэтому спейсинг плотнее, чтобы все пункты уместились
-     без переноса. */
+     в одну строку. Без квадратиков-якорей место освобождается, поэтому
+     отступы чуть плотнее, а шрифт на шаг крупнее прежнего. */
   @media (max-width: 767px) {
     .nav {
       width: 100%;
       justify-content: space-between;
-      gap: 0.2rem 0.25rem;
-      font-size: 0.6875rem;
+      gap: 0.15rem 0.2rem;
+      font-size: var(--text-xs);
       margin-left: 0;
     }
 
@@ -213,17 +221,6 @@ const canonical = `${SITE_URL || Astro.url.origin}${Astro.url.pathname}`;
     font-weight: 500;
     /* Пункт меню не разрывается внутри себя на два слова */
     white-space: nowrap;
-  }
-
-  /* Компактная чёрточка слева от каждого пункта меню — простой
-     графический якорь для плоского текста без цветной панели.
-     У «На заказ» свой акцент (тонированный фон), чёрточка не нужна. */
-  .nav a:not(.nav__cta):not(.nav__home)::before {
-    content: '';
-    width: 3px;
-    height: 3px;
-    background: var(--accent);
-    flex-shrink: 0;
   }
 
   .nav a:hover {
@@ -254,14 +251,6 @@ const canonical = `${SITE_URL || Astro.url.origin}${Astro.url.pathname}`;
       font-size: 0.6875rem;
       padding: 0.15rem 0.3rem;
     }
-  }
-
-  .nav a.nav__cta::before {
-    content: '';
-    width: 3px;
-    height: 3px;
-    background: var(--accent-strong);
-    flex-shrink: 0;
   }
 
   .nav a.nav__cta:hover {

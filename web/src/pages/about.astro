@@ -43,14 +43,55 @@ const workshopPhotos = (workshopPage?.photos ?? []).map((f) =>
         <ul class="about__gallery-grid">
           {workshopPhotos.map((src) => (
             <li>
-              <img class="about__gallery-img" src={src} alt="Мастерская" loading="lazy" />
+              <button class="about__gallery-btn" type="button" data-lightbox-open>
+                <img class="about__gallery-img" src={src} alt="Мастерская" loading="lazy" />
+              </button>
             </li>
           ))}
         </ul>
       </div>
     )}
   </section>
+
+  <div class="lightbox" data-lightbox hidden>
+    <button class="lightbox__close" type="button" data-lightbox-close aria-label="Закрыть">×</button>
+    <img class="lightbox__img" data-lightbox-img src="" alt="Мастерская" />
+  </div>
 </Base>
+
+<script>
+  const lightbox = document.querySelector<HTMLDivElement>('[data-lightbox]');
+  const lightboxImg = document.querySelector<HTMLImageElement>('[data-lightbox-img]');
+
+  function openLightbox(src: string) {
+    if (!lightbox || !lightboxImg) return;
+    lightboxImg.src = src;
+    lightbox.hidden = false;
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeLightbox() {
+    if (!lightbox || !lightboxImg) return;
+    lightbox.hidden = true;
+    lightboxImg.src = '';
+    document.body.style.overflow = '';
+  }
+
+  document.querySelectorAll<HTMLButtonElement>('[data-lightbox-open]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const img = btn.querySelector('img');
+      if (img) openLightbox(img.src);
+    });
+  });
+
+  document.querySelector('[data-lightbox-close]')?.addEventListener('click', closeLightbox);
+  lightbox?.addEventListener('click', (e) => {
+    if (e.target === lightbox) closeLightbox();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeLightbox();
+  });
+</script>
 
 <style>
   .page {
@@ -91,11 +132,68 @@ const workshopPhotos = (workshopPage?.photos ?? []).map((f) =>
     gap: 1rem;
   }
 
+  .about__gallery-btn {
+    display: block;
+    width: 100%;
+    padding: 0;
+    border: none;
+    background: none;
+    cursor: pointer;
+    border-radius: var(--radius);
+  }
+
   .about__gallery-img {
     width: 100%;
     aspect-ratio: 4 / 3;
     object-fit: cover;
     border-radius: var(--radius);
+    transition: transform 0.15s ease, opacity 0.15s ease;
+  }
+
+  .about__gallery-btn:hover .about__gallery-img {
+    transform: scale(1.02);
+    opacity: 0.92;
+  }
+
+  .lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(20, 17, 14, 0.92);
+    padding: 1rem;
+  }
+
+  .lightbox[hidden] {
+    display: none;
+  }
+
+  .lightbox__img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    border-radius: var(--radius);
+  }
+
+  .lightbox__close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    width: 2.5rem;
+    height: 2.5rem;
+    border: none;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
+  }
+
+  .lightbox__close:hover {
+    background: rgba(255, 255, 255, 0.3);
   }
 
   @media (min-width: 640px) {

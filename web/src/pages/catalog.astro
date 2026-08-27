@@ -207,7 +207,12 @@ const description = 'Кашпо из массива дерева: напольн
     border-radius: var(--radius);
     overflow: hidden;
     box-shadow: var(--shadow);
-    transition: transform 0.15s ease;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lg, 0 12px 24px rgba(0, 0, 0, 0.12));
   }
 
   .card__link {
@@ -217,10 +222,6 @@ const description = 'Кашпо из массива дерева: напольн
 
   .card__link:hover {
     text-decoration: none;
-  }
-
-  .card__link:hover .card {
-    transform: translateY(-3px);
   }
 
   .card__img {
