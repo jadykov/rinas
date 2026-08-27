@@ -1,5 +1,5 @@
 ---
-import { getProducts, getReviews, getPageBySlug, fileUrl } from '../lib/pb';
+import { getProducts, getReviews, fileUrl } from '../lib/pb';
 import Base from '../layouts/Base.astro';
 import LeadForm from '../components/LeadForm.astro';
 import PhotoPlaceholder from '../components/PhotoPlaceholder.astro';
@@ -8,11 +8,6 @@ const products = await getProducts();
 const featured = products.filter((p) => p.is_featured);
 const rest = products.filter((p) => !p.is_featured);
 const fallback = [...featured, ...rest].slice(0, 3);
-
-const workshopPage = await getPageBySlug('workshop');
-const workshopPhotos = (workshopPage?.photos ?? []).map((f) =>
-  fileUrl('pages', workshopPage!.id, f, Astro.url.origin),
-);
 
 const reviews = await getReviews();
 
@@ -75,19 +70,6 @@ const description =
       </ol>
     </div>
   </section>
-
-  {workshopPhotos.length > 0 && (
-    <section class="workshop container">
-      <h2 class="section__title">Мастерская</h2>
-      <ul class="workshop__grid">
-        {workshopPhotos.map((src) => (
-          <li>
-            <img class="workshop__img" src={src} alt="Мастерская" loading="lazy" />
-          </li>
-        ))}
-      </ul>
-    </section>
-  )}
 
   {reviews.length > 0 && (
     <section class="reviews container">
@@ -257,27 +239,6 @@ const description =
     padding: 2rem 0 3rem;
   }
 
-  .workshop {
-    padding-top: 1rem;
-    padding-bottom: 3rem;
-  }
-
-  .workshop__grid {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-
-  .workshop__img {
-    width: 100%;
-    aspect-ratio: 4 / 3;
-    object-fit: cover;
-    border-radius: var(--radius);
-  }
-
   .reviews {
     padding-top: 1rem;
     padding-bottom: 3rem;
@@ -365,10 +326,6 @@ const description =
       padding: 3rem 0 2.5rem;
     }
 
-    .workshop__grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-
     .reviews__grid {
       grid-template-columns: repeat(2, 1fr);
     }
@@ -389,10 +346,6 @@ const description =
 
     .steps__list {
       grid-template-columns: repeat(4, 1fr);
-    }
-
-    .workshop__grid {
-      grid-template-columns: repeat(3, 1fr);
     }
 
     .reviews__grid {
