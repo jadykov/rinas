@@ -43,10 +43,21 @@ const canonical = `${SITE_URL || Astro.url.origin}${Astro.url.pathname}`;
               fill="#f0e7d8"
             />
           </svg>
-          <span class="logo__full">Кашпо<span class="logo__accent"> из массива</span></span>
-          <span class="logo__short">Главная</span>
+          Кашпо<span class="logo__accent"> из массива</span>
         </a>
         <nav class="nav" aria-label="Основная навигация">
+          <a class="nav__home" href="/">
+            <svg class="nav__home-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <rect width="24" height="24" rx="6" fill="var(--accent)" />
+              <path d="M12 13c0-4-2.5-6-2.5-6s0 4 2.5 6z" fill="#f0e7d8" />
+              <path d="M12 13c0-4.5 3-7 3-7s0 4.5-3 7z" fill="#f6f0e6" />
+              <path
+                d="M8.5 13.5h7l-.7 4.5a1 1 0 0 1-1 .8h-3.6a1 1 0 0 1-1-.8l-.7-4.5z"
+                fill="#f0e7d8"
+              />
+            </svg>
+            Главная
+          </a>
           <a href="/catalog">Каталог</a>
           <a href="/info">Доставка</a>
           <a href="/about">О нас</a>
@@ -111,30 +122,49 @@ const canonical = `${SITE_URL || Astro.url.origin}${Astro.url.pathname}`;
     color: var(--text);
   }
 
+  .logo:hover {
+    text-decoration: none;
+  }
+
   .logo__accent {
     color: var(--accent);
-  }
-
-  /* На узких экранах — короткое «Главная» вместо полного названия,
-     чтобы освободить место шапке и не давить на меню рядом. */
-  .logo__short {
-    display: none;
-  }
-
-  @media (max-width: 767px) {
-    .logo__full {
-      display: none;
-    }
-
-    .logo__short {
-      display: inline;
-    }
   }
 
   .logo__mark {
     width: 0.92em;
     height: 0.92em;
     flex-shrink: 0;
+  }
+
+  /* На узких экранах вместо отдельной строки с названием сайта — единая
+     строка меню: «Главная» (со значком сайта вместо точки) в том же ряду
+     и в том же стиле, что остальные пункты. */
+  @media (max-width: 767px) {
+    .logo {
+      display: none;
+    }
+  }
+
+  .nav a.nav__home {
+    display: none;
+  }
+
+  @media (max-width: 767px) {
+    .nav a.nav__home {
+      display: inline-flex;
+    }
+  }
+
+  .nav__home-icon {
+    width: 0.9rem;
+    height: 0.9rem;
+    flex-shrink: 0;
+  }
+
+  @media (min-width: 768px) {
+    .logo {
+      font-size: var(--text-xl);
+    }
   }
 
   .nav {
@@ -171,7 +201,7 @@ const canonical = `${SITE_URL || Astro.url.origin}${Astro.url.pathname}`;
   /* Компактная чёрточка слева от каждого пункта меню — простой
      графический якорь для плоского текста без цветной панели.
      У «На заказ» свой акцент (тонированный фон), чёрточка не нужна. */
-  .nav a:not(.nav__cta)::before {
+  .nav a:not(.nav__cta):not(.nav__home)::before {
     content: '';
     width: 3px;
     height: 3px;
