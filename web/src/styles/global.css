@@ -1,7 +1,7 @@
 :root {
   /* Палитра: тёплый светлый фон, тёмный текст, один акцентный цвет */
   --bg: #faf7f2;
-  --bg-elevated: #ffffff;
+  --bg-elevated: #f7f1e6;
   --text: #2b2621;
   --text-muted: #6b6359;
   --accent: #9a6b3f;
