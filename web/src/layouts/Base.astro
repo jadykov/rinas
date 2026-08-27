@@ -2,7 +2,7 @@
 import '../styles/global.css';
 import Metrics from '../components/Metrics.astro';
 import SocialBadge from '../components/SocialBadge.astro';
-import { TELEGRAM_LINK, MAX_LINK } from '../lib/site';
+import { TELEGRAM_LINK, MAX_LINK, SITE_URL } from '../lib/site';
 
 interface Props {
   title: string;
@@ -12,7 +12,7 @@ interface Props {
 
 const { title, description, image } = Astro.props;
 const fullTitle = title ? `${title} — Мастерская кашпо` : 'Мастерская кашпо';
-const canonical = `${Astro.url.origin}${Astro.url.pathname}`;
+const canonical = `${SITE_URL || Astro.url.origin}${Astro.url.pathname}`;
 ---
 <!doctype html>
 <html lang="ru">

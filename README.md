@@ -49,6 +49,7 @@ docker compose up -d --build
 
 ```
 PUBLIC_PB_PUBLIC_URL=   # публичный адрес PocketBase для браузера
+PUBLIC_SITE_URL=        # https://домен.ru — для canonical/OG/sitemap за прокси (см. ниже)
 TELEGRAM_BOT_TOKEN=     # бот, принимающий заявки
 TELEGRAM_CHAT_ID=       # чат мастера
 TELEGRAM_USERNAME=

@@ -26,3 +26,13 @@ export const MAX_LINK = process.env.MAX_LINK ?? '';
  * Заполняется владельцем (номер счётчика из кабинета Метрики).
  */
 export const YANDEX_METRIKA_ID = process.env.YANDEX_METRIKA_ID ?? '';
+
+/**
+ * Публичный адрес сайта (https://домен.ru, без слэша на конце) для canonical,
+ * Open Graph и sitemap.xml. За Caddy-прокси Node видит только внутреннее
+ * HTTP-соединение (Caddy → web:4321 по plain HTTP), поэтому Astro.url.origin
+ * в проде ошибочно возвращает http:// вместо https:// — если задать
+ * PUBLIC_SITE_URL явно, он в приоритете над Astro.url.origin.
+ * Пусто — используется origin текущего запроса (верно для локальной разработки).
+ */
+export const SITE_URL = (process.env.PUBLIC_SITE_URL ?? '').replace(/\/+$/, '');

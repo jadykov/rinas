@@ -4,6 +4,7 @@
  */
 import type { APIRoute } from 'astro';
 import { getProducts } from '../lib/pb';
+import { SITE_URL } from '../lib/site';
 
 const staticPaths = ['/', '/catalog', '/custom', '/info', '/about', '/privacy'];
 
@@ -16,7 +17,7 @@ const esc = (s: string) =>
     .replace(/'/g, '&apos;');
 
 export const GET: APIRoute = async ({ url }) => {
-  const origin = url.origin;
+  const origin = SITE_URL || url.origin;
 
   const pages = staticPaths.map(
     (p) => `  <url><loc>${esc(origin + p)}</loc></url>`,
